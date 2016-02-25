@@ -1,0 +1,201 @@
+﻿<script type="text/javascript">
+    var font_seqs = '@ViewBag.font_seqs';
+    var totalPrice = 0;
+    var first_font_name = '';
+
+    var windowClose = function () {
+        self.close();
+    }
+
+    var refreshParent = function () {
+        window.opener.location.reload();
+    }
+
+    // 결제창에 폰트 목록 띄우기
+    var paymentIndex = function (font_seqs) {
+        var data = {
+            font_seqs: font_seqs
+        }
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/ListBySeq',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    for (var index = 0; index < result.data.length; index++) {
+                        var item = result.data[index];
+
+                        if(index == 0)
+                        {
+                            first_font_name = item.name;
+                        }
+                        var appendData = '<tr>' + '<td>' + (index + 1) + '</td>';
+                        appendData += ('<td>' + item.name + '</td>');
+                        appendData += ('<td>' + item.brand_info.name + '</td>');
+                        //appendData += ('<td>' + item.period + '개월' + '</td>');
+                        if (item.period == 0) {
+                            appendData += ('<td>' + '무제한' + '</td>');
+                        } else {
+                            appendData += ('<td>' + item.period + '개월' + '</td>');
+                        }
+                        appendData += ('<td>' + item.price + '원' + '</td>');
+                        $('#payment-list table tbody').append(appendData);
+
+                        totalPrice += item.price;
+                    }
+                    // 총 결제금액
+                    $('#payment-list .total-price h3').html(totalPrice + '원');
+
+                    if (totalPrice == 0) {
+                        $('.pay-method').css('display', 'none');
+                    }
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+            }
+        })
+    }
+
+    // 결제하기
+    var pay = function () {
+        //TODO 지워야함
+        //totalPrice = 500;
+
+        $('input[name=amount]').val(totalPrice);
+        $('input[name=userid]').val(getUserInfo());
+
+        var fontids = font_seqs.replace(/,/gi, '/');
+        if (fontids.slice(-1) == '/') {
+            fontids = fontids.slice(0, -1);
+        }
+
+        var font_count = fontids.split('/').length;
+        if (font_count > 1) {
+
+            $('input[name=product]').val(first_font_name + ' 외 ' + font_count + '개 폰트');
+        }
+        else {
+            $('input[name=product]').val(first_font_name);
+        }
+        $('input[name=fontids]').val(fontids);
+
+        var pay_tool = $(':radio[name="pay-tool"]:checked').val();
+        if (pay_tool == 'ACCOUNT') {
+            $('#form1').submit();
+        }
+        else {
+            $('#formPhone').submit();
+        }
+    }
+
+    $(document).ready(function () {
+        paymentIndex(font_seqs);
+        window.onunload = refreshParent;
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">결제상품목록</h3>
+                </div><!-- end panel-heading -->
+                <div id="payment-list" class="panel-body">
+                    <table class="table table-alternative table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>폰트이름</th>
+                                <th>브랜드</th>
+                                <th>사용기간</th>
+                                <th>가격</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="total-price" style="text-align:center">
+                        총 결제 금액<h3>@*16,500원*@</h3>
+                    </div>
+                </div><!-- end panel-body -->
+                @*<div id="payment-one" class="panel-body">
+                    <table class="table table-alternative table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>폰트이름</th>
+                                <th>브랜드</th>
+                                <th>판매자</th>
+                                <th>구매일</th>
+                                <th>사용기간</th>
+                                <th>가격</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>RF질질이</td>
+                                <td>장경호</td>
+                                <td>리얼폰트</td>
+                                <td>2015.11.16</td>
+                                <td>1년</td>
+                                <td>5,500원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="text-align:center">
+                        총 결제 금액<h3>5,500원</h3>
+                    </div>
+                </div>*@<!-- end panel-body -->
+            </div><!-- end panel -->
+            <div class="panel panel-info pay-method">
+                <div class="panel-heading">
+                    <h3 class="panel-title">결제수단</h3>
+                </div><!-- end panel-heading -->
+                <div class="panel-body" style="text-align:center">
+                    <label class="radio" style="display:inline-block; margin-right: 10px">
+                        <input name="pay-tool" type="radio" value="ACCOUNT" checked />
+                        <span></span>
+                        계좌이체
+                    </label>
+                    <label class="radio" style="display:inline-block; margin-right: 10px">
+                        <input name="pay-tool" type="radio" value="PHONE" />
+                        <span></span>
+                        휴대폰 결제
+                    </label>
+                    @*<label class="radio" style="display:inline-block; margin-right: 10px">
+                        <input name="pay-tool" type="radio" value="VIRTUAL" />
+                        <span></span>
+                        가상계좌
+                    </label>*@
+                </div><!-- end panel-body -->
+            </div><!-- end panel -->
+            <div style="text-align:center">
+                <button class="btn btn-default" onclick="pay()">결제</button>
+                <button class="btn btn-danger" onclick="windowClose()">취소</button>
+            </div>
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div>
+<form id="form1" action="http://realfontpay.place5.com/Ready.aspx" method="post" accept-charset="euc-kr">
+    <input type="hidden" name="ispersonal" value="1" />
+    <input type="hidden" name="amount" value="500" />
+    <input type="hidden" name="product" value="RF또똣등폰트2개" />
+    <input type="hidden" name="userid" value="20" />
+    <input type="hidden" name="fontids" value="55/56" />
+</form>
+
+<form id="formPhone" action="http://realfontphone.place5.com/Ready.aspx" method="post" accept-charset="euc-kr">
+    <input type="hidden" name="ispersonal" value="1" />
+    <input type="hidden" name="amount" value="500" />
+    <input type="hidden" name="product" value="RF또똣등폰트2개" />
+    <input type="hidden" name="userid" value="20" />
+    <input type="hidden" name="fontids" value="55/56" />
+</form>

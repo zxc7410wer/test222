@@ -1,0 +1,263 @@
+﻿<script type="text/javascript">
+    var font_seq = @ViewBag.font_seq;
+
+    var windowClose = function () {
+        self.close();
+    }
+
+    var refreshParent = function () {
+        window.opener.location.reload();
+    }
+
+    // 폰트 정보 가져오기
+    var fontIndex = function ( font_seq ) {
+        var data = {
+            font_seq: font_seq,
+            flag: 0,
+            use: 2
+        }
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+
+                var appendData = '<tr>' + '<td>' + (1) + '</td>';
+                appendData += ('<td>' + result.name + '</td>');
+                appendData += ('<td>' + result.brand_info.name + '</td>');
+                appendData += ('<td>' + result.seller_name + '</td>');
+                if(result.period == 0){
+                    appendData += ('<td>' + '무제한' + '</td>');
+                }else {
+                    appendData += ('<td>' + result.period + '개월' + '</td>');
+                }
+                
+                appendData += ('<td>' + '무료' + '</td>');
+                $('#payment-list table tbody').append(appendData);
+
+                //totalPrice += result.price;
+
+                // 총 결제금액
+                $('#payment-list .total-price h3').html('무료');
+
+                file_url = result.file_url;
+
+                //if (totalPrice == 0) {
+                //    $('.pay-method').css('display', 'none');
+                //}
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 상업용 구매시 필요한 정보 입력후 확인
+    var confirmDownload = function () {
+        var companyNumber = $('#inputCompanyNumber').val();
+        var email = $('#inputEmail').val();
+        var name = $('#inputName').val();
+        var phone = $('#inputPhone').val();
+        var purpose = $('#inputPurpose').val();
+
+        if(!isValid( companyNumber )) {
+            alert('사업자 번호를 입력해주세요');
+            return;
+        }
+        if(!isValid( email )) {
+            alert('담당자 이메일을 입력해주세요');
+            return;
+        }
+        if(!isValid( name )) {
+            alert('담당자 이름을 입력해주세요');
+            return;
+        }
+        if(!isValid( phone )) {
+            alert('전화번호를 입력해주세요');
+            return;
+        }
+        if(!isValid( purpose )) {
+            alert('폰트 사용처를 입력해주세요');
+            return;
+        }
+
+        var data = {
+            font_seq: font_seq,
+            user_seq: getUserInfo(),
+            company_number: companyNumber,
+            email: email,
+            name: name,
+            phone: phone,
+            purpose: purpose
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/payment/completefreecommercial',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+
+                if(result.state == 'duplicated') {
+                    alert('이미 다운로드한 폰트입니다. 마이페이지 구매목록에서 확인해주세요.');
+                    window.close();
+                    return;
+                }
+
+                if (result.state == 'ok') {
+                    var link = document.createElement("a");
+                    //link.download = name;
+                    link.href = result.file_url;
+                    link.click(function () {
+                        
+                    });
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        fontIndex(font_seq);
+        window.onunload = refreshParent;
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">상품목록</h3>
+                </div><!-- end panel-heading -->
+                <div id="payment-list" class="panel-body">
+                    <table class="table table-alternative table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>폰트이름</th>
+                                <th>브랜드</th>
+                                <th>사용기간</th>
+                                <th>가격</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*<tr>
+                                    <td>1</td>
+                                    <td>RF질질이</td>
+                                    <td>장경호</td>
+                                    <td>리얼폰트</td>
+                                    <td>2015.11.16</td>
+                                    <td>1년</td>
+                                    <td>5,500원</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>RF멍멍이</td>
+                                    <td>장경호</td>
+                                    <td>리얼폰트</td>
+                                    <td>2015.11.16</td>
+                                    <td>1년</td>
+                                    <td>5,500원</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>RF야옹이</td>
+                                    <td>장경호</td>
+                                    <td>리얼폰트</td>
+                                    <td>2015.11.16</td>
+                                    <td>1년</td>
+                                    <td>5,500원</td>
+                                </tr>*@
+                        </tbody>
+                    </table>
+                    @*<div class="total-price" style="text-align:center">
+                        총 결제 금액<h3>@*16,500원</h3>
+                    </div>*@
+                </div><!-- end panel-body -->
+            </div><!-- end panel -->
+            @*<div class="panel panel-info pay-method">
+                <div class="panel-heading">
+                    <h3 class="panel-title">결제수단</h3>
+                </div><!-- end panel-heading -->
+                <div class="panel-body" style="text-align:center">
+                    <label class="radio" style="display:inline-block; margin-right: 10px">
+                        <input name="pay-tool" type="radio" value="ACCOUNT" checked />
+                        <span></span>
+                        계좌이체
+                    </label>
+                </div><!-- end panel-body -->
+            </div><!-- end panel -->*@
+            <form id="commercial-info" class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label" for="inputCompanyNumber">사업자번호</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputCompanyNumber" placeholder="사업자 번호(-없이 번호만)" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">담당자 이메일</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputEmail" placeholder="이메일" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputName">담당자 이름</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputName" placeholder="담당자 이름" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputPhone">회사 대표 전화</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputPhone" placeholder="전화번호" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputPurpose">폰트 사용처</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputPurpose" placeholder="폰트 사용처" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+            </form>
+            <div style="text-align:center">
+                <button class="btn btn-default" onclick="confirmDownload()">확인</button>
+                <button class="btn btn-danger" onclick="windowClose()">취소</button>
+            </div>
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div>

@@ -1,0 +1,100 @@
+﻿<script type="text/javascript">
+    var getFreeFont = function (use) {
+        var data = {
+            flag: 1,
+            use: use,
+            page: 1
+        };
+        //console.log(data);
+        
+        loadingStart();
+
+        $.ajax({
+            url: '/font/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //console.log(result.data);
+                    var appendTitle = '';
+                    if(use == '1') {
+                        appendTitle += '<h2 id="scrollspy-folder" style="font-family: \'Montez\', cursive;">무료폰트(개인용)</h2>';
+                        appendTitle += '<p>개인용으로 사용 가능한 무료폰트 입니다.</p>';
+                    }
+                    else {
+                        appendTitle += '<h2 id="scrollspy-folder" style="font-family: \'Montez\', cursive;">무료폰트(상업용)</h2>';
+                        appendTitle += '<p>상업용으로 사용 가능한 무료폰트 입니다.</p>';
+                    }
+
+                    $(appendTitle).appendTo('.portfolio-wrapper');
+
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<div class="card film art">';
+                        appendData += ('<a href="/font/index?font_seq=' + item.font_seq + '&flag=1' + '&use=' + use + '" class="thumb">');
+                        appendData += ('<img style="height: 180px;" src="' + item.photos[0] + '" alt="" title="" />');
+                        appendData += ('<span class="overlay"><span class="fa fa-search"></span></span>');
+                        appendData += ('</a>');
+                        appendData += ('<div class="card-body">');
+                        appendData += ('<h2><a href="/font/index?font_seq=' + item.font_seq +'&flag=1' + '&use=' + use + '">' + item.name + '</a></h2>');
+                        appendData += ('<p>'+ item.intro + '</p>');
+                        appendData += ('</div>');
+                        appendData += ('<div class="card-footer">');
+                        appendData += ('<ul class="list-inline filters">');
+                        if (item.brand_info != null) {
+                            appendData += ('<li><a href="#none">' + '#' + item.brand_info.name + '</a></li>');
+                        }
+                        appendData += ('<li><a href="#none">#무료</a></li>');
+                        if(item.is_personal == 1){
+                            appendData += ('<li><a href="#none">#개인</a></li>');
+                        }
+                        if(item.is_personal == 0) {
+                            appendData += ('<li><a href="#none">#상업</a></li>');
+                        }
+                        if(item.is_personal == 2) {
+                            appendData += ('<li><a href="#none">#개인#상업</a></li>');
+                        }
+                        appendData += ('</ul></div></div>');
+                        //$('.portfolio-wrapper').append(appendData);
+                        $(appendData).appendTo('.portfolio-wrapper');
+                    }
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    $(document).ready(function () {
+        var use = @ViewBag.use;
+        getFreeFont(use);
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="portfolio-wrapper free">
+        @*<div class="card film art">
+            <a href="/font/index" class="thumb">
+                <img src="../Content/img/sample/sintel/haru.jpg" alt="" title="" />
+                <span class="overlay"><span class="fa fa-search"></span></span>
+            </a>
+            <div class="card-body">
+                <h2><a href="/font/index">THE하루</a></h2>
+
+                <p>시험삼아 처음 만들어보게 된 폰트 처음엔 폰트로 만들 생각은 아니었는데 결과물이 생각보다 마음에 들어서..</p>
+            </div><!-- end card-body -->
+            <div class="card-footer">
+                <ul class="list-inline filters">
+                    <li><a href="#none">#장경호</a></li>
+                    <li><a href="#none">#무료</a></li>
+                </ul>
+            </div><!-- end card-footer -->
+        </div><!-- end card -->*@
+    </div><!-- end portfolio-wrapper -->
+
+</div>

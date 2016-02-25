@@ -1,0 +1,101 @@
+﻿<div class="col-md-9 content portfolio item">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <div id="portfolio-carousel" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#portfolio-carousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#portfolio-carousel" data-slide-to="1"></li>
+                        <li data-target="#portfolio-carousel" data-slide-to="2"></li>
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <img src="../Content/img/sample/elephants-dream/rf11.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->
+                        <div class="item">
+                            <img src="../Content/img/sample/elephants-dream/rf22.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->
+                        <div class="item">
+                            <img src="../Content/img/sample/elephants-dream/rf33.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->
+                    </div>
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#portfolio-carousel" data-slide="prev">
+                        <span class="fa fa-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#portfolio-carousel" data-slide="next">
+                        <span class="fa fa-chevron-right"></span>
+                    </a>
+                </div><!-- end carousel -->
+                <h1>RF질질이</h1>
+                <p class="lead">시험삼아 처음 만들어보게 된 폰트 처음엔 폰트로 만들 생각은 아니었는데 결과물이 생각보다 마음에 들어서 올리게 되었습니다. </p>
+            </div><!-- end page-header -->
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="list-unstyled post-meta">
+                        <li><span class="fa fa-calendar"></span>등록일 : 2015-10-25</li>
+                        <li><span class="fa fa-list-ul"></span>판매자: <a href="#none">장경호</a></li>
+                        <li><span class="fa fa-list-ul"></span>OS : windows, mac</li>
+                        <li><span class="fa fa-list-ul"></span>포맷 : TTF</li>
+                        <li><span class="fa fa-list-ul"></span>사용기간: 1년</li>
+                        <li><span class="fa fa-list-ul"></span>가격 : 5,500원</li>
+                        <li><a onclick="addCart()" href="#none" class="btn btn-default">장바구니에 담기</a></li>
+                        <li><a onclick="buy()" href="#none" class="btn btn-primary">즉시구매</a></li>
+                    </ul><!-- end post-meta -->
+                </div><!-- end col -->
+                <div class="col-md-8">
+                    <div class="post-content">
+                        <h3>폰트 소개</h3>
+                        <p>With Blender originating as an in-house creation tool, the day-to-day feedback and interaction of both developing and using the software was one of its most outstanding features.</p>
+                        <p>In the past 2.5 years of open source development, it was especially this uniqueness of Blender that has proven to be difficult to organise and maintain. The Blender Foundation itself has no intention to grow or expand into a company or studio; such a development would conflict with the public benefit goals. Instead, the Foundation aims at endorsing and supporting activities within (educational) institutes, universities and companies.</p>
+                        <p>It is our conviction that establishing - content targeted - incidental, independent and temporal projects will be a strong boost for open source development strategies in general. Daily interaction of artists and developers can not only result in proof of concepts, but also in research of innovative solutions for the whole range of tools artists can deploy.</p>
+                        <p>By keeping such projects content focused and temporal, it also is possible for a wide range of currently active volunteers to participate. Not many people are in a position to give up a career (study, job) to become full-time employed on the projects of their interest. But there are many active volunteers prepared and motivated to do this incidentally for shorter time spans.</p>
+                        <p>Whilst Project Orange’s prime target is to create an outstanding movie short, the secondary goal is to research efficient ways to increase quality of Open Source projects in general.</p>
+                    </div><!-- end col -->
+                </div><!-- end row -->
+            </div><!-- end post-content -->
+        </article>
+        <ul class="pager">
+            <li class="prev">
+                <small><span class="fa fa-chevron-left"></span>Previous</small>
+                <h3><a href="/font/detail">RF장경호</a></h3>
+                <p><span class="fa fa-calendar"></span>2015-10-23</p>
+            </li>
+            <li class="next">
+                <small>Next<span class="fa fa-chevron-right"></span></small>
+                <h3><a href="/font/detail">RF이민재</a></h3>
+                <p><span class="fa fa-calendar"></span>2015-10-28</p>
+            </li>
+        </ul>
+    </div><!-- end post -->
+</div><!-- end col -->
+
+<script type="text/javascript">
+
+    var addCart = function () {
+        var cartConfirm = confirm('해당 상품을 장바구니에 담으시겠습니까?');
+        if (!cartConfirm) {
+            return; 
+        }
+        // 장바구니 추가 api 넣기
+    }
+
+    var buy = function () {
+        var buyConfirm = confirm('해당 상품을 구매하시겠습니까? \n확인을 누르시면 결제 페이지로 이동합니다.');
+        if (!buyConfirm) {
+            return;
+        }
+        // 결제 페이지로 이동
+    }
+
+    // 폰트 상세 정보 불러오기
+    var fontDetail = function () {
+
+    }
+
+    $(document).ready(function () {
+        
+    });
+</script>

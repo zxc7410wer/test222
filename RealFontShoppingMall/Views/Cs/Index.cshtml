@@ -1,0 +1,103 @@
+﻿<script type="text/javascript">
+    var request = function () {
+        var name = $('#inputName').val();
+        var email = $('#inputEmail').val();
+        var text = $('#inputMessage').val();
+
+        var data = {
+            name: name,
+            email: email,
+            text: text
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/cs/request',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    alert('문의가 등록되었습니다.');
+                    location.reload();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    $(document).ready(function () {
+
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <h1>고객문의</h1>
+                <p class="lead">문의사항 또는 건의사항을 말씀해주세요.</p>
+            </div><!-- end page-header -->
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="fa-ul">
+                        <li><i class="fa-li fa fa-envelope"></i> <a href="#none">stoctoct@gmail.com</a></li>
+                        @*<li><i class="fa-li fa fa-phone"></i>+82 10 8667 2458</li>*@
+                        @*<li><i class="fa-li fa fa-mobile-phone"></i>+82 10 8667 2458</li>*@
+                        <li><i class="fa-li fa fa-mobile-phone"></i>카카오톡: stoctoct</li>
+                        <li><i class="fa-li fa fa-coffee"></i> <a target="_blank" href="http://cafe.naver.com/realfont">http://cafe.naver.com/realfont</a></li>
+                    </ul>
+                </div><!-- end col-md-6 -->
+                <div class="col-md-6">
+                    <ul class="fa-ul">
+                        <li><i class="fa-li fa fa-facebook"></i> <a target="_blank" href="http://www.facebook.com/realfont">http://www.facebook.com/realfont</a></li>
+                        <li><i class="fa-li fa fa-twitter"></i> <a href="#none">@@stoctoct</a></li>
+                        @*<li><i class="fa-li fa fa-pinterest"></i> <a href="#none">www.pinterest.com/website</a></li>*@
+                    </ul>
+                </div><!-- end col-md-6 -->
+            </div><!-- end row -->
+            <h2 class="margin-top-50">문의하기</h2>
+            <form class="form-horizontal form-contact">
+                <div class="form-group">
+                    <label class="control-label" for="inputName">이름</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" id="inputName" placeholder="본인의 이름을 적어주세요." class="form-control" />
+                            </div><!-- end col -->
+                        </div><!-- end row -->
+                    </div><!-- end controls -->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">이메일</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" id="inputEmail" placeholder="본인의 이메일 주소를 적어주세요." class="form-control" />
+                            </div><!-- end col -->
+                        </div><!-- end row -->
+                    </div><!-- end controls -->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputMessage">문의내용</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <textarea id="inputMessage" placeholder="문의 내용을 적어주세요." class="form-control" rows="10"></textarea>
+                            </div><!-- end col -->
+                        </div><!-- end row -->
+                    </div><!-- end controls -->
+                </div><!-- end form-group -->
+                <div class="form-actions form-actions-no-bg">
+                    <button type="button" class="btn btn-lg btn-default" onclick="request()">문의</button>
+                </div><!-- end form-actions -->
+            </form>
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->

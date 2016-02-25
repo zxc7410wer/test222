@@ -1,0 +1,651 @@
+﻿<script type="text/javascript">
+    var cartList = {};
+    // 유저 정보 가져오기
+    var userIndex = function ( user_seq ) {
+        var data = {
+            user_seq : user_seq
+        };
+        //console.log(data);
+        
+        loadingStart();
+
+        $.ajax({
+            url: '/user/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //console.log(result.data);
+                    setUserData(result.data);
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 유저정보 보여주기
+    var setUserData = function (data) {
+        $('.uneditable-input').html(data.login_id);
+        $('#inputEmail').val(data.email);
+        $('#inputPhone').val(data.phone);
+        var $radios = $('input:radio[name=gender]');
+        if (data.gender == 1) {
+            $radios.filter('[value=1]').prop('checked', true);
+        }
+        if (data.gender == 0) {
+            $radios.filter('[value=0]').prop('checked', true);
+        }
+    }
+
+    // 비밀번호 변경
+    var changePassword = function () {
+        var new_password = $('#new_password').val();
+        var new_password_confirm = $('#new_password_confirm').val();
+        //console.log(new_password);
+        //console.log(new_password_confirm);
+
+        if (new_password != new_password_confirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        var data = {
+            user_seq: getUserInfo(),
+            new_password : new_password
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/changepassword',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    alert('비밀번호가 변경되었습니다.');
+                    $('#changePasswordModal').modal('hide');
+                    return;
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 회원 정보 수정
+    var update = function () {
+        var email = $('#inputEmail').val();
+        var phone = $('#inputPhone').val();
+        var gender = $('input[name="gender"]:checked').val();
+
+        var data = {
+            user_seq: getUserInfo(),
+            email: email,
+            phone: phone,
+            gender :gender
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/update',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    alert('정보가 변경되었습니다.');
+                    location.reload();
+                    return;
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    var cancel = function () {
+        location.href = '/home/index';
+    }
+
+    // 장바구니 삭제
+    var removeCart = function (seq) {
+        var data = {
+            user_seq : getUserInfo(),
+            my_font_seq : seq
+        };
+        //console.log(data);
+
+        var deleteConfirm = confirm('삭제하시겠습니까?');
+        if(!deleteConfirm){
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/removecart',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //$('#cart table tbody').empty();
+                    $('#cart table tbody').html("");
+                    getCart();
+                    //location.reload();
+                    return;
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 폰트 다운로드
+    var downloadFontFromUrl = function ( url ) {
+        var oIframe = window.document.createElement('iframe');
+        var $body = jQuery(document.body);
+        var $oIframe = jQuery(oIframe).attr({
+            src: url,
+            style: 'display:none'
+        });
+        $body.append($oIframe);
+    }
+
+    // 구매목록 가져오기
+    var getPurchase = function () {
+
+        var data = {
+            user_seq: getUserInfo(),
+            page: 1
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/PurchasedFont',
+            method: 'GET',
+            data: data,
+            cache : false,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.font_info.name + '</td>');
+
+                        if(isValid(item.is_personal)) {
+                            if(item.is_personal == 1) {
+                                appendData += ('<td>' + '개인' + '</td>');
+                            }
+                            if(item.is_personal == 0) {
+                                appendData += ('<td>' + '상업' + '</td>');
+                            }
+                        }
+                        else {
+                            appendData += ('<td>' + '-' + '</td>');
+                        }
+                        appendData += ('<td>' + item.font_info.seller_name + '</td>');
+                        appendData += ('<td>' + item.purchased_at + '</td>');
+                        if(item.font_info.period == 0){
+                            appendData += ('<td>' + '무제한' + '</td>');
+                        }
+                        else {
+                            appendData += ('<td>' + item.font_info.period + '개월' + '</td>');
+                        }
+                        
+                        if(item.is_personal == 1) {
+                            appendData += ('<td>' + item.font_info.price + '원' + '</td>');
+                        }
+                        if(item.is_personal == 0) {
+                            appendData += ('<td>' + item.font_info.price_commercial + '원' + '</td>');
+                        }
+                        
+                        //appendData += ('<td>' + '<button class="btn btn-default">' + '<a style="color: white;" href="' + item.font_info.file_url + '" download>다운로드</a>' +'</button>' + '</td></tr>');
+                        appendData += ('<td>' + '<a style="color: white;" onclick="downloadFontFromUrl(\'' + item.font_info.file_url + '\')" href="#none">' + '<button class="btn btn-default">' + '다운로드' + '</button>' + '</a>' + '</td></tr>');
+                        $('#purchase table tbody').append(appendData);
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 장바구니 가져오기
+    var getCart = function () {
+
+        var data = {
+            user_seq: getUserInfo(),
+            page: 1
+        };
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/cartfont',
+            method: 'GET',
+            data: data,
+            cache : false,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#cart table tbody').html("");
+                    cartList = result.data;
+                    //console.log(cartList);
+                    for (var index = 0; index < cartList.length; index++)
+                    {
+                        var item = cartList[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.font_info.name + '</td>');
+                        //if(item.font_info.brand_info != null) {
+                        //    appendData += ('<td>' + item.font_info.brand_info.name + '</td>');
+                        //}
+                        //else {
+                        //    appendData += ('<td>' + '없음' + '</td>');
+                        //}
+                        
+                        if(isValid(item.is_personal)) {
+                            if(item.is_personal == 1) {
+                                appendData += ('<td>' + '개인' + '</td>');
+                            }
+                            if(item.is_personal == 0) {
+                                appendData += ('<td>' + '상업' + '</td>');
+                            }
+                        }
+                        else {
+                            appendData += ('<td>' + '-' + '</td>');
+                        }
+                        
+                        appendData += ('<td>' + item.font_info.created_at + '</td>');
+                        if(item.font_info.period == 0){
+                            appendData += ('<td>' + '무제한' + '</td>');
+                        }
+                        else {
+                            appendData += ('<td>' + item.font_info.period + '개월' + '</td>');
+                        }
+                        // 가격
+                        if(item.is_personal == 0){
+                            appendData += ('<td>' + item.font_info.price_commercial + '원' + '</td>');
+                        }
+                        if(item.is_personal == 1) {
+                            appendData += ('<td>' + item.font_info.price + '원' + '</td>');
+                        }
+                        
+                        // 구매버튼
+                        if(item.is_personal == 0){
+                            appendData += ('<td>' + '<button class="btn btn-default" onclick="openPaymentCommercial(' + item.font_info.font_seq + ')">' + '구매' +'</button>' + '<button class="btn btn-danger" onclick="removeCart(' + item.my_font_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        }
+                        if(item.is_personal == 1) {
+                            appendData += ('<td>' + '<button class="btn btn-default" onclick="openPaymentPersonal(' + item.font_info.font_seq + ')">' + '구매' +'</button>' + '<button class="btn btn-danger" onclick="removeCart(' + item.my_font_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        }
+                        console.log(appendData);
+                        $('#cart table tbody').append(appendData);
+                    }
+                    //setTimeout(function(){ 
+                        
+                    //}, 500);                    
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 회원탈퇴
+    var unregister = function () {
+
+        var data = {
+            user_seq: getUserInfo()
+        };
+        //console.log(data);
+
+        var unregisterConfirm = confirm('정말 탈퇴하시겠습니까?');
+        if(!unregisterConfirm) {
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/unregister',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    logout();
+                    location.href = '/home/index';
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 개인용 폰트 구매하기
+    var purchasePersonalAll = function () {
+        var data = '';
+        var cart_count = cartList.length;
+        if(cart_count == 0)
+        {
+            return;
+        }
+
+        for(var index = 0; index < cart_count; index++)
+        {
+            var item = cartList[index];
+
+            if(item.is_personal == 0)
+            {
+                continue;
+            }
+
+            data += (item.font_info.font_seq + ',');
+        }
+        if( !isValid(data) )
+        {
+            return;
+        }
+        openPaymentPersonal(data);
+
+    }
+
+    // 상업용 폰트 구매하기
+    var purchaseCommercialAll = function () {
+        var data = '';
+        var cart_count = cartList.length;
+        if(cart_count == 0)
+        {
+            return;
+        }
+
+        for(var index = 0; index < cart_count; index++)
+        {
+            var item = cartList[index];
+
+            if(item.is_personal == 1)
+            {
+                continue;
+            }
+
+            data += (item.font_info.font_seq + ',');
+        }
+
+        if( !isValid(data) )
+        {
+            return;
+        }
+        openPaymentCommercial(data);
+    }
+
+    // 탭 변경
+    var changeTab = function (index) {
+        //console.log(index);
+        if (index == 0) {
+            $('#myinfo').css('display', 'block');
+            $('#purchase').css('display', 'none');
+            $('#cart').css('display', 'none');
+
+            $('#myinfo-tab').addClass('active');
+            $('#buy-tab').removeClass('active');
+            $('#cart-tab').removeClass('active');
+        }
+        if (index == 1) {
+            $('#myinfo').css('display', 'none');
+            $('#purchase').css('display', 'block');
+            $('#cart').css('display', 'none');
+
+            $('#myinfo-tab').removeClass('active');
+            $('#buy-tab').addClass('active');
+            $('#cart-tab').removeClass('active');
+
+            getPurchase();
+        }
+        if (index == 2) {
+            $('#myinfo').css('display', 'none');
+            $('#purchase').css('display', 'none');
+            $('#cart').css('display', 'block');
+
+            $('#myinfo-tab').removeClass('active');
+            $('#buy-tab').removeClass('active');
+            $('#cart-tab').addClass('active');
+
+            getCart();
+        }
+    }
+
+    $(document).ready(function () {
+        var flag = @ViewBag.flag;
+        changeTab(flag);
+
+        var user_seq = getUserInfo();
+        if (isValid(user_seq)) {
+            userIndex(user_seq);
+        }
+
+        $('.uneditable-input').css('border', 'none');
+        $('.uneditable-input').css('font-size', '16px');
+        $('.uneditable-input').css('box-shadow', 'none');
+        $('.uneditable-input').css('font-weight', 'bold');
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <h1>My Page</h1>
+                <p class="lead"></p>
+            </div><!-- end page-header -->
+
+            @*<h2>마이페이지</h2>*@
+            <ul class="nav nav-tabs">
+                <li id="myinfo-tab" class="active"><a href="/mypage/index?flag=0">내 정보</a></li>
+                <li id="buy-tab"><a href="/mypage/index?flag=1">구매목록</a></li>
+                <li id="cart-tab"><a href="/mypage/index?flag=2">장바구니</a></li>
+            </ul>
+
+            <form id="myinfo" class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label">아이디</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <span class="form-control uneditable-input"></span>
+                            </div><!-- end col md -->
+                            <div class="col-md-6">
+                                <a href="#changePasswordModal" role="button" class="btn btn-default" data-toggle="modal">비밀번호 변경</a>
+                                <!-- Modal -->
+                                <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" style="width:300px;">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel">비밀번호 변경</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label class="sr-only" for="exampleInputEmail2">비밀번호</label>
+                                                    <input type="password" class="form-control width-200" id="new_password" placeholder="비밀번호" />
+                                                </div><!-- end form group -->
+                                                <div class="form-group">
+                                                    <label class="sr-only" for="exampleInputPassword2">비밀번호 확인</label>
+                                                    <input type="password" class="form-control width-200" id="new_password_confirm" placeholder="비밀번호 확인" />
+                                                </div><!-- end form group -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" onclick="changePassword()" class="btn btn-default">변경</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div><!-- /.modal -->
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">이메일</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputEmail" placeholder="stoctoct@gmail.com" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">성별</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                    <input name="gender" type="radio" value="1" checked />
+                                    <span></span>
+                                    남
+                                </label>
+                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                    <input name="gender" type="radio" value="0" />
+                                    <span></span>
+                                    여
+                                </label>
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="inputPhone">전화번호</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputPhone" placeholder="01022223333" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-actions">
+                    <button type="button" onclick="update()" class="btn btn-default">정보 변경</button>
+                    <button type="button" onclick="cancel()" class="btn btn-danger">취소</button>
+                    <button type="button" onclick="unregister()" class="btn btn-primary" style="float:right">회원탈퇴</button>
+                </div><!-- end form actions -->
+
+            </form>
+            <div id="purchase">
+                <h3>구매목록</h3>
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>폰트이름</th>
+                            <th>용도</th>
+                            <th>판매자</th>
+                            <th>구매일</th>
+                            <th>사용기간</th>
+                            <th>가격</th>
+                            <th>다운로드</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="cart">
+                @*<h3>장바구니</h3>*@
+                <button style="float:right; margin-bottom: 10px;" class="btn btn-default" onclick="purchasePersonalAll()">개인용 폰트 전체구매</button>
+                <button style="float:right; margin-bottom: 10px; margin-right:10px;" class="btn btn-default" onclick="purchaseCommercialAll()">상업용 폰트 전체구매</button>
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>폰트명</th>
+                            <th>용도</th>
+                            <th>등록일</th>
+                            <th>사용기간</th>
+                            <th>가격</th>
+                            <th>구매/삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->

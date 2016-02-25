@@ -1,0 +1,733 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RealFontShoppingmallModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Blog">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="info" Type="nvarchar(max)" />
+          <Property Name="link_url" Type="nvarchar(max)" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="tag" Type="nvarchar(max)" />
+          <Property Name="important_point" Type="int" />
+          <Property Name="color" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="BlogPhoto">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="blog_seq" Type="int" />
+          <Property Name="photo_url" Type="nvarchar(max)" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Brand">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="info" Type="nvarchar" MaxLength="200" />
+          <Property Name="brand_url" Type="nvarchar" MaxLength="500" />
+          <Property Name="photo" Type="nvarchar(max)" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="link_click_count" Type="int" />
+          <Property Name="important_point" Type="int" />
+        </EntityType>
+        <EntityType Name="Cs">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="email" Type="nvarchar" MaxLength="50" />
+          <Property Name="text" Type="nvarchar(max)" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Font">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="brand_seq" Type="int" />
+          <Property Name="is_free" Type="int" />
+          <Property Name="is_personal" Type="int" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="price" Type="int" />
+          <Property Name="price_commercial" Type="int" />
+          <Property Name="os" Type="nvarchar" MaxLength="50" />
+          <Property Name="format" Type="nvarchar" MaxLength="50" />
+          <Property Name="period" Type="int" />
+          <Property Name="seller_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="file_url" Type="nvarchar(max)" />
+          <Property Name="info" Type="nvarchar(max)" />
+          <Property Name="intro" Type="nvarchar(max)" />
+          <Property Name="link_url" Type="nvarchar(max)" />
+          <Property Name="click_count" Type="int" />
+          <Property Name="important_point" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="FontPhoto">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="font_seq" Type="int" />
+          <Property Name="photo_url" Type="nvarchar" MaxLength="500" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="MyFont">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_seq" Type="int" />
+          <Property Name="font_seq" Type="int" />
+          <Property Name="purchased_at" Type="datetime" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="is_personal" Type="int" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_seq" Type="int" />
+          <Property Name="font_seq" Type="int" />
+          <Property Name="method" Type="nvarchar" MaxLength="100" />
+          <Property Name="product" Type="nvarchar(max)" />
+          <Property Name="price" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="company_number" Type="nvarchar" MaxLength="50" />
+          <Property Name="company_email" Type="nvarchar" MaxLength="50" />
+          <Property Name="company_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="company_phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="purpose" Type="nvarchar(max)" />
+          <Property Name="is_personal" Type="int" />
+          <Property Name="ok" Type="int" />
+          <Property Name="fontids" Type="nvarchar" MaxLength="200" />
+          <Property Name="paid_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="role_type" Type="int" />
+          <Property Name="login_id" Type="nvarchar" MaxLength="50" />
+          <Property Name="password" Type="nvarchar" MaxLength="50" />
+          <Property Name="email" Type="nvarchar" MaxLength="50" />
+          <Property Name="phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="gender" Type="int" />
+          <Property Name="point" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_BlogPhoto_Blog">
+          <End Role="Blog" Type="Self.Blog" Multiplicity="0..1" />
+          <End Role="BlogPhoto" Type="Self.BlogPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Blog">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="BlogPhoto">
+              <PropertyRef Name="blog_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Font_Brand">
+          <End Role="Brand" Type="Self.Brand" Multiplicity="0..1" />
+          <End Role="Font" Type="Self.Font" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Brand">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Font">
+              <PropertyRef Name="brand_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FontPhoto_Font">
+          <End Role="Font" Type="Self.Font" Multiplicity="0..1" />
+          <End Role="FontPhoto" Type="Self.FontPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="FontPhoto">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MyFont_Font">
+          <End Role="Font" Type="Self.Font" Multiplicity="0..1" />
+          <End Role="MyFont" Type="Self.MyFont" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="MyFont">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MyFont_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="MyFont" Type="Self.MyFont" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="MyFont">
+              <PropertyRef Name="user_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payment_Font">
+          <End Role="Font" Type="Self.Font" Multiplicity="0..1" />
+          <End Role="Payment" Type="Self.Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payment_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Payment" Type="Self.Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="user_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RealFontShoppingmallModelStoreContainer">
+          <EntitySet Name="Blog" EntityType="Self.Blog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BlogPhoto" EntityType="Self.BlogPhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Brand" EntityType="Self.Brand" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cs" EntityType="Self.Cs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Font" EntityType="Self.Font" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FontPhoto" EntityType="Self.FontPhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MyFont" EntityType="Self.MyFont" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Payment" EntityType="Self.Payment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_BlogPhoto_Blog" Association="Self.FK_BlogPhoto_Blog">
+            <End Role="Blog" EntitySet="Blog" />
+            <End Role="BlogPhoto" EntitySet="BlogPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Font_Brand" Association="Self.FK_Font_Brand">
+            <End Role="Brand" EntitySet="Brand" />
+            <End Role="Font" EntitySet="Font" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FontPhoto_Font" Association="Self.FK_FontPhoto_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="FontPhoto" EntitySet="FontPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MyFont_Font" Association="Self.FK_MyFont_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="MyFont" EntitySet="MyFont" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MyFont_User" Association="Self.FK_MyFont_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="MyFont" EntitySet="MyFont" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payment_Font" Association="Self.FK_Payment_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="Payment" EntitySet="Payment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payment_User" Association="Self.FK_Payment_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Payment" EntitySet="Payment" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RealFontShoppingmallModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="RealFontShoppingmallEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Blog" EntityType="RealFontShoppingmallModel.Blog" />
+          <EntitySet Name="BlogPhoto" EntityType="RealFontShoppingmallModel.BlogPhoto" />
+          <EntitySet Name="Brand" EntityType="RealFontShoppingmallModel.Brand" />
+          <EntitySet Name="Cs" EntityType="RealFontShoppingmallModel.Cs" />
+          <EntitySet Name="Font" EntityType="RealFontShoppingmallModel.Font" />
+          <EntitySet Name="FontPhoto" EntityType="RealFontShoppingmallModel.FontPhoto" />
+          <EntitySet Name="MyFont" EntityType="RealFontShoppingmallModel.MyFont" />
+          <EntitySet Name="Payment" EntityType="RealFontShoppingmallModel.Payment" />
+          <EntitySet Name="User" EntityType="RealFontShoppingmallModel.User" />
+          <AssociationSet Name="FK_BlogPhoto_Blog" Association="RealFontShoppingmallModel.FK_BlogPhoto_Blog">
+            <End Role="Blog" EntitySet="Blog" />
+            <End Role="BlogPhoto" EntitySet="BlogPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Font_Brand" Association="RealFontShoppingmallModel.FK_Font_Brand">
+            <End Role="Brand" EntitySet="Brand" />
+            <End Role="Font" EntitySet="Font" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FontPhoto_Font" Association="RealFontShoppingmallModel.FK_FontPhoto_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="FontPhoto" EntitySet="FontPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MyFont_Font" Association="RealFontShoppingmallModel.FK_MyFont_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="MyFont" EntitySet="MyFont" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payment_Font" Association="RealFontShoppingmallModel.FK_Payment_Font">
+            <End Role="Font" EntitySet="Font" />
+            <End Role="Payment" EntitySet="Payment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MyFont_User" Association="RealFontShoppingmallModel.FK_MyFont_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="MyFont" EntitySet="MyFont" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payment_User" Association="RealFontShoppingmallModel.FK_Payment_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Payment" EntitySet="Payment" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Blog">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="link_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="tag" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="important_point" Type="Int32" />
+          <Property Name="color" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BlogPhoto" Relationship="RealFontShoppingmallModel.FK_BlogPhoto_Blog" FromRole="Blog" ToRole="BlogPhoto" />
+        </EntityType>
+        <EntityType Name="BlogPhoto">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="blog_seq" Type="Int32" />
+          <Property Name="photo_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Blog" Relationship="RealFontShoppingmallModel.FK_BlogPhoto_Blog" FromRole="BlogPhoto" ToRole="Blog" />
+        </EntityType>
+        <EntityType Name="Brand">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="info" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="brand_url" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="photo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="link_click_count" Type="Int32" />
+          <Property Name="important_point" Type="Int32" />
+          <NavigationProperty Name="Font" Relationship="RealFontShoppingmallModel.FK_Font_Brand" FromRole="Brand" ToRole="Font" />
+        </EntityType>
+        <EntityType Name="Cs">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Font">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="brand_seq" Type="Int32" />
+          <Property Name="is_free" Type="Int32" />
+          <Property Name="is_personal" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="price" Type="Int32" />
+          <Property Name="price_commercial" Type="Int32" />
+          <Property Name="os" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="format" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="period" Type="Int32" />
+          <Property Name="seller_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="file_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="intro" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="link_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="click_count" Type="Int32" />
+          <Property Name="important_point" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Brand" Relationship="RealFontShoppingmallModel.FK_Font_Brand" FromRole="Font" ToRole="Brand" />
+          <NavigationProperty Name="FontPhoto" Relationship="RealFontShoppingmallModel.FK_FontPhoto_Font" FromRole="Font" ToRole="FontPhoto" />
+          <NavigationProperty Name="MyFont" Relationship="RealFontShoppingmallModel.FK_MyFont_Font" FromRole="Font" ToRole="MyFont" />
+          <NavigationProperty Name="Payment" Relationship="RealFontShoppingmallModel.FK_Payment_Font" FromRole="Font" ToRole="Payment" />
+        </EntityType>
+        <EntityType Name="FontPhoto">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="font_seq" Type="Int32" />
+          <Property Name="photo_url" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Font" Relationship="RealFontShoppingmallModel.FK_FontPhoto_Font" FromRole="FontPhoto" ToRole="Font" />
+        </EntityType>
+        <EntityType Name="MyFont">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_seq" Type="Int32" />
+          <Property Name="font_seq" Type="Int32" />
+          <Property Name="purchased_at" Type="DateTime" Precision="3" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="is_personal" Type="Int32" />
+          <NavigationProperty Name="Font" Relationship="RealFontShoppingmallModel.FK_MyFont_Font" FromRole="MyFont" ToRole="Font" />
+          <NavigationProperty Name="User" Relationship="RealFontShoppingmallModel.FK_MyFont_User" FromRole="MyFont" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_seq" Type="Int32" />
+          <Property Name="font_seq" Type="Int32" />
+          <Property Name="method" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="product" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="price" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="company_number" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="company_email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="company_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="company_phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="purpose" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="is_personal" Type="Int32" />
+          <Property Name="ok" Type="Int32" />
+          <Property Name="fontids" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="paid_at" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Font" Relationship="RealFontShoppingmallModel.FK_Payment_Font" FromRole="Payment" ToRole="Font" />
+          <NavigationProperty Name="User" Relationship="RealFontShoppingmallModel.FK_Payment_User" FromRole="Payment" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="role_type" Type="Int32" />
+          <Property Name="login_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="gender" Type="Int32" />
+          <Property Name="point" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MyFont" Relationship="RealFontShoppingmallModel.FK_MyFont_User" FromRole="User" ToRole="MyFont" />
+          <NavigationProperty Name="Payment" Relationship="RealFontShoppingmallModel.FK_Payment_User" FromRole="User" ToRole="Payment" />
+        </EntityType>
+        <Association Name="FK_BlogPhoto_Blog">
+          <End Type="RealFontShoppingmallModel.Blog" Role="Blog" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.BlogPhoto" Role="BlogPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Blog">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="BlogPhoto">
+              <PropertyRef Name="blog_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Font_Brand">
+          <End Type="RealFontShoppingmallModel.Brand" Role="Brand" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.Font" Role="Font" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Brand">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Font">
+              <PropertyRef Name="brand_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FontPhoto_Font">
+          <End Type="RealFontShoppingmallModel.Font" Role="Font" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.FontPhoto" Role="FontPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="FontPhoto">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MyFont_Font">
+          <End Type="RealFontShoppingmallModel.Font" Role="Font" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.MyFont" Role="MyFont" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="MyFont">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payment_Font">
+          <End Type="RealFontShoppingmallModel.Font" Role="Font" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.Payment" Role="Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Font">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="font_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MyFont_User">
+          <End Type="RealFontShoppingmallModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.MyFont" Role="MyFont" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="MyFont">
+              <PropertyRef Name="user_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payment_User">
+          <End Type="RealFontShoppingmallModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="RealFontShoppingmallModel.Payment" Role="Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="seq" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="user_seq" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RealFontShoppingmallModelStoreContainer" CdmEntityContainer="RealFontShoppingmallEntities">
+          <EntitySetMapping Name="Blog">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.Blog">
+              <MappingFragment StoreEntitySet="Blog">
+                <ScalarProperty Name="color" ColumnName="color" />
+                <ScalarProperty Name="important_point" ColumnName="important_point" />
+                <ScalarProperty Name="tag" ColumnName="tag" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="link_url" ColumnName="link_url" />
+                <ScalarProperty Name="info" ColumnName="info" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BlogPhoto">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.BlogPhoto">
+              <MappingFragment StoreEntitySet="BlogPhoto">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="photo_url" ColumnName="photo_url" />
+                <ScalarProperty Name="blog_seq" ColumnName="blog_seq" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Brand">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.Brand">
+              <MappingFragment StoreEntitySet="Brand">
+                <ScalarProperty Name="important_point" ColumnName="important_point" />
+                <ScalarProperty Name="link_click_count" ColumnName="link_click_count" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="photo" ColumnName="photo" />
+                <ScalarProperty Name="brand_url" ColumnName="brand_url" />
+                <ScalarProperty Name="info" ColumnName="info" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cs">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.Cs">
+              <MappingFragment StoreEntitySet="Cs">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Font">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.Font">
+              <MappingFragment StoreEntitySet="Font">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="important_point" ColumnName="important_point" />
+                <ScalarProperty Name="click_count" ColumnName="click_count" />
+                <ScalarProperty Name="link_url" ColumnName="link_url" />
+                <ScalarProperty Name="intro" ColumnName="intro" />
+                <ScalarProperty Name="info" ColumnName="info" />
+                <ScalarProperty Name="file_url" ColumnName="file_url" />
+                <ScalarProperty Name="seller_name" ColumnName="seller_name" />
+                <ScalarProperty Name="period" ColumnName="period" />
+                <ScalarProperty Name="format" ColumnName="format" />
+                <ScalarProperty Name="os" ColumnName="os" />
+                <ScalarProperty Name="price_commercial" ColumnName="price_commercial" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+                <ScalarProperty Name="is_free" ColumnName="is_free" />
+                <ScalarProperty Name="brand_seq" ColumnName="brand_seq" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FontPhoto">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.FontPhoto">
+              <MappingFragment StoreEntitySet="FontPhoto">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="photo_url" ColumnName="photo_url" />
+                <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MyFont">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.MyFont">
+              <MappingFragment StoreEntitySet="MyFont">
+                <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="purchased_at" ColumnName="purchased_at" />
+                <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+                <ScalarProperty Name="user_seq" ColumnName="user_seq" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Payment">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.Payment">
+              <MappingFragment StoreEntitySet="Payment">
+                <ScalarProperty Name="paid_at" ColumnName="paid_at" />
+                <ScalarProperty Name="fontids" ColumnName="fontids" />
+                <ScalarProperty Name="ok" ColumnName="ok" />
+                <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+                <ScalarProperty Name="purpose" ColumnName="purpose" />
+                <ScalarProperty Name="company_phone" ColumnName="company_phone" />
+                <ScalarProperty Name="company_name" ColumnName="company_name" />
+                <ScalarProperty Name="company_email" ColumnName="company_email" />
+                <ScalarProperty Name="company_number" ColumnName="company_number" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="product" ColumnName="product" />
+                <ScalarProperty Name="method" ColumnName="method" />
+                <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+                <ScalarProperty Name="user_seq" ColumnName="user_seq" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="RealFontShoppingmallModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="point" ColumnName="point" />
+                <ScalarProperty Name="gender" ColumnName="gender" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="login_id" ColumnName="login_id" />
+                <ScalarProperty Name="role_type" ColumnName="role_type" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="없음" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,686 @@
+﻿@*<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 내 ASP.NET 응용 프로그램</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("응용 프로그램 이름", "Index", "Home", null, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("홈", "Index", "Home")</li>
+                    <li>@Html.ActionLink("정보", "About", "Home")</li>
+                    <li>@Html.ActionLink("연락처", "Contact", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 내 ASP.NET 응용 프로그램</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>*@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>리얼폰트 쇼핑몰</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="리얼폰트 폰트 쇼핑몰 ">
+    <meta name="author" content="주식회사 리얼폰트">
+
+    @*@Styles.Render("~/Content/css")*@
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+    <!-- Le styles -->
+    <link href="../Content/css/bootstrap.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    @*<link href="../Content/css/font-awesome.css" rel="stylesheet">*@
+    @*<link rel="stylesheet" href="css/font-awesome-ie7.min.css">*@
+    <!--[if IE 7]>
+      <link rel="stylesheet" href="../Content/css/font-awesome-ie7.min.css">
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../Content/css/style.css" />
+
+    @*<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>*@
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../Content/js/html5.js"></script>
+      <script src="../Content/js/respond.src.js"></script>
+    <![endif]-->
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../Content/img/sample/logo-144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../Content/img/sample/logo-114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../Content/img/sample/logo-72.png">
+    <link rel="apple-touch-icon-precomposed" href="../Content/img/sample/logo-57.png">
+    <link rel="shortcut icon" href="../Content/img/sample/logo.png">
+
+    @*<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-lightness/jquery-ui.css">*@
+    <link href="../Content/css/jquery-ui.css" rel="stylesheet" type="text/css">
+    <link href="../Content/css/evol.colorpicker.css" rel="stylesheet" type="text/css">
+
+    @*<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>*@
+    @*<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>*@
+    <script src="../Content/js/jquery-2.1.4.js"></script>
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>*@
+    <script src="../Content/js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../Content/js/bootstrap.js"></script>
+    <script src="../Content/js/rebound.js"></script>
+    <script src="../Content/js/jquery.isotope.min.js"></script>
+    <script src="../Content/js/plugin/jquery.isloading.min.js"></script>
+    
+    <script src="../Content/js/evol.colorpicker.min.js" type="text/javascript" charset="utf-8"></script>
+    <!--로딩 css-->
+    <style>
+        .isloading-wrapper.isloading-right {
+            margin-left: 10px;
+        }
+        .isloading-overlay {
+            position: relative;
+            text-align: center;
+        }
+        .isloading-overlay .isloading-wrapper {
+            background: #FFFFFF;
+            border-radius: 7px;
+            display: inline-block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            top: 10%;
+            z-index:9000;
+            font-size: 20px;
+        }
+    </style>
+    <!--새 폰트 알림 css-->
+    <style>
+        .new_font_alarm {
+            border-radius: 150px;
+            color: #e50012;
+            text-align: center;
+            font-size: 10px;
+            width: 30px;
+            height: 30px;
+            line-height:27px;
+            position: absolute;
+            margin-left: 34px;
+            top: -11px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                <div class="navbar" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#rebound-navbar-collapse"><span class="fa fa-bars"></span> Menu</button>
+                        <a href="/home/index" class="navbar-brand">Realfont</a>
+                        <p class="brand-text">꾸미는 재미, 리얼폰트 폰트 쇼핑몰</p>
+                    </div><!-- end navbar-header -->
+                    <div class="collapse navbar-collapse" id="rebound-navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="title">메뉴</li>
+                            <li class="title-blog"><a href="/blog/index">공유블로그</a></li>
+                            @*<li class="title-free"><a href="/free/index">무료폰트</a></li>*@
+                            <li class="title-mypage"><a href="/mypage/index?flag=0">마이페이지</a></li>
+                            <li class="title-cart"><a href="/mypage/index?flag=2">장바구니</a></li>
+                            <li class="title-information"><a href="/information/index">사용설명서</a></li>
+                            <li class="title-company"><a href="/company/index">회사소개</a></li>
+                            <li class="title-copyright"><a href="/copyright/index">저작권</a></li>
+                            <li class="title-login" style="display: none"><a href="/user/index">로그인</a></li>
+                            <li class="title-register" style="display: none"><a href="/user/register">회원가입</a></li>
+                            <li class="title-admin" style="display: none"><a href="/admin/index?flag=0">관리자</a></li>
+                            <li class="title-logout"><a href="/home/index" onclick="logout()">로그아웃</a></li>
+                        </ul>
+
+                        <ul class="nav navbar-nav">
+                            <li class="title">무료폰트<div class="new_font_alarm free" style="margin-left: 46px;">New!</div></li>
+                            <li class="title-free-personal"><a id="free_personal" href="/free/index?use=1">개인용</a></li>
+                            <li class="title-free-commercial"><a id="free_commercial" href="/free/index?use=0">상업용</a></li>
+                        </ul>
+
+                        <ul class="brand-list nav navbar-nav nav-social hidden-sm hidden-xs">
+                            <li class="title">브랜드<div class="new_font_alarm brand">New!</div></li>
+                            <li><a href="/brand/index?brand_seq=0">전체보기</a></li>
+                            @*<li><a href="/brand/index">장경호(9)</a></li>
+                            <li><a href="/brand/index">김거용(4)</a></li>
+                            <li><a href="/brand/index">김재용(11)</a></li>
+                            <li><a href="/brand/index">이민재(1)</a></li>
+                            <li><a href="/brand/index">이문주(8)</a></li>
+                            <li><a href="/brand/index">정원희(7)</a></li>*@
+                        </ul>
+
+                        <ul class="nav navbar-nav nav-social hidden-sm hidden-xs">
+                            <li class="title">소셜</li>
+                            <li class="title-facebook"><a target="_blank" href="http://www.facebook.com/realfont">리얼폰트 페이스북</a></li>
+                            <li class="title-cafe"><a target="_blank" href="http://cafe.naver.com/realfont">리얼폰트 카페 </a></li>
+                            <li class="title-cs"><a href="/cs/index">고객문의</a></li>
+                        </ul>
+                    </div><!-- end navbar-collapse -->
+                </div><!-- end navbar -->
+            </div><!-- end col -->
+            @RenderBody()
+            <!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end wrapper -->
+
+    <footer class="hidden-xs" style="border-top:1px solid; padding-top:10px">
+        @*<p class="pull-right">&copy; Copyright 2015. (주) 리얼폰트</p>*@
+        <p class="pull-right">
+            &copy; Copyright 2015. (주) 리얼폰트
+            <br />
+            대표: 장경호
+            <br />
+            사업자 번호: 105-87-72377
+            <br />
+            고객센터 번호 : 070-8787-0114
+            <br />
+            회사 주소 : 경기도 부천시 원미구 중동 1161 716
+        </p>
+    </footer>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+        //
+        // 전역으로 쓰이는 변수들
+        //
+
+        var userInfo;
+
+        //
+        // 전역으로 쓰이는 함수들
+        //
+        // 데이터 확인
+        var isValid = function ( value ) {
+            if ( value == undefined || value == null || value === "" ) {
+                return false;
+            }
+            return true;
+        }
+
+        // 유저 정보 가져오기
+        var getUserInfo = function () {
+            var result;
+            result = localStorage.getItem("REALFONT_USERINFO");
+            return result;
+        }
+
+        // 유저 정보 저장하기
+        var setUserInfo = function (data) {
+            if (!isValid(data)) {
+                return;
+            }
+            localStorage.setItem("REALFONT_USERINFO", data.user_seq);
+        }
+
+        // 로그인 상태 유지 여부 저장하기
+        var setLoginStatus = function (value) {
+            if (!isValid(value)) {
+                localStorage.setItem("REALFONT_KEEP_LOGINSTATUS", false);
+                return;
+            }
+            localStorage.setItem("REALFONT_KEEP_LOGINSTATUS", value);
+        }
+
+        // 로그아웃
+        var logout = function () {
+            localStorage.removeItem("REALFONT_USERINFO");
+            loadingStart();
+        }
+
+        // 페이지 좌측 메뉴 글씨 색상 변경
+        var setActive = function () {
+            var url = document.URL;
+            var splited = url.split('/');
+            var count = splited.length;
+
+            var flag = splited[count - 2] + '/' + splited[count - 1];
+            flag = $.trim(flag);
+            //flag = flag.trim();
+            //console.log(flag);
+            $('.navbar-nav li').removeClass('active');
+
+            if (flag == 'home/index' || flag.indexOf(':') != -1 || splited[count - 2].indexOf('com') > -1) {
+                $('.title-free-personal').addClass('active');
+            }
+            if (flag == 'blog/index') {
+                $('.title-blog').addClass('active');
+            }
+            if (flag == 'user/index') {
+                $('.title-login').addClass('active');
+            }
+            if (flag == 'user/register') {
+                $('.title-register').addClass('active');
+            }
+            if (flag == 'free/index?use=0') {
+                $('.title-free-commercial').addClass('active');
+            }
+            if (flag == 'free/index?use=1') {
+                $('.title-free-personal').addClass('active');
+            }
+            if (flag == 'mypage/index?flag=0' || flag == 'mypage/index?flag=1') {
+                $('.title-mypage').addClass('active');
+            }
+            if (flag == 'mypage/index?flag=2') {
+                $('.title-cart').addClass('active');
+            }
+            if (flag == 'information/index') {
+                $('.title-information').addClass('active');
+            }
+            if (flag == 'company/index') {
+                $('.title-company').addClass('active');
+            }
+            if (flag == 'cs/index') {
+                $('.title-cs').addClass('active');
+            }
+            if (flag == 'copyright/index') {
+                $('.title-copyright').addClass('active');
+            }
+            if (flag == 'admin/index') {
+                $('.title-admin').addClass('active');
+            }
+        }
+
+        function checkClose() {
+            if (self.closed == true) {
+                windowUnloadLoginStatus();
+            }
+        }
+
+        // 브랜드메뉴 클릭시 글씨색깔 변화
+        var setBrandActive = function (brand_seq) {
+            $('.navbar-nav li').removeClass('active');
+            $('.brandseq-' + brand_seq).addClass('active');
+        }
+
+        // 메뉴 가리기
+        var hideMenu = function () {
+            var url = document.URL;
+            var splited = url.split('/');
+            var count = splited.length;
+            
+            var flag = splited[count - 2];
+
+            if (flag == 'payment') {
+                $('.sidebar').css('display', 'none');
+            }
+        }
+
+        // 리얼폰트에 등록된 브랜드 목록 불러오기
+        var getBrandList = function () {
+            var data = {
+            };
+            //console.log(data);
+
+            $.ajax({
+                url: '/brand/list',
+                method: 'GET',
+                data: data,
+                success: function (result) {
+                    if (result.state == 'ok') {
+                        //console.log(result.data);
+                        
+                        for (var index = 0; index < result.data.length; index++) {
+                            var item = result.data[index];
+                            var appendData = '<li class="brandseq-' + item.brand_seq + '"><a href="/brand/index?brand_seq=' + item.brand_seq + '">' + item.name + '(' + item.font_count + ')' + '</a></li>';
+                            //$('.brand-list').append(appendData);
+                            $(appendData).appendTo('.brand-list');
+                        }
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+
+                    alert('잘못된 요청입니다.');
+                    //console.log(xhr.statusText);
+                    //console.log(textStatus);
+                    //console.log(error);
+                }
+            })
+        }
+
+        // 무료폰트 개인용 상업용 개수 가져오기
+        var getFreeCount = function () {
+            var data = {
+
+            };
+
+            $.ajax({
+                url: '/font/GetFreeFontCount',
+                method: 'GET',
+                data: data,
+                success: function (result) {
+                    $('#free_personal').html('개인용(' + result.personal_count + ')');
+                    $('#free_commercial').html('상업용(' + result.commercial_count + ')');
+                },
+                error: function (xhr, textStatus, error) {
+
+                    alert('잘못된 요청입니다.');
+                    //console.log(xhr.statusText);
+                    //console.log(textStatus);
+                    //console.log(error);
+                }
+            })
+        }
+
+        // 새로운 폰트 확인하기
+        var checkNewFont = function () {
+            var data = {
+
+            };
+
+            $.ajax({
+                url: '/font/CheckNewFont',
+                method: 'GET',
+                data: data,
+                success: function (result) {
+                    console.log('check!');
+                    if (result.free_count > 0) {
+                        $('.new_font_alarm.free').css('display', 'block');
+                    }
+                    else {
+                        $('.new_font_alarm.free').css('display', 'none');
+                    }
+
+                    if (result.brand_count > 0) {
+                        $('.new_font_alarm.brand').css('display', 'block');
+                    }
+                    else {
+                        $('.new_font_alarm.brand').css('display', 'none');
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    alert('잘못된 요청입니다.');
+                    //console.log(xhr.statusText);
+                    //console.log(textStatus);
+                    //console.log(error);
+                }
+            })
+        }
+
+        // 로딩 시작
+        var loadingStart = function () {
+            $.isLoading({
+                text: "Loading..",
+                position: "overlay"
+            });
+        }
+
+        // 로딩 끝
+        var loadingStop = function () {
+            $.isLoading('hide');
+        }
+
+        // 로그인 여부 체크하기
+        var checkLoginStatus = function () {
+            var user_seq = getUserInfo();
+            if (!isValid(user_seq)) {
+                alert('로그인이 필요한 기능입니다.');
+                location.href = '/user/index';
+                return false;
+            }
+            return true;
+        }
+
+        var windowUnloadLoginStatus = function () {
+            // 창닫을 시 로그아웃 확인 변수
+            var refreshKeyPressed = false;
+            var modifierPressed = false;
+
+            var f5key = 116;
+            var rkey = 82;
+            var modkey = [17, 224, 91, 93];
+
+            // 창닫을시 로그아웃
+            // Check for refresh keys
+            $(document).bind(
+                'keydown',
+                function (evt) {
+                    // Check for refresh
+                    if (evt.which == f5key || modifierPressed && evt.which == rkey) {
+                        refreshKeyPressed = true;
+                    }
+
+                    // Check for modifier
+                    if (modkey.indexOf(evt.which) >= 0) {
+                        modifierPressed = true;
+                    }
+                }
+            );
+
+            // Check for refresh keys
+            $(document).bind(
+                'keyup',
+                function (evt) {
+                    // Check undo keys
+                    if (evt.which == f5key || evt.which == rkey) {
+                        refreshKeyPressed = false;
+                    }
+
+                    // Check for modifier
+                    if (modkey.indexOf(evt.which) >= 0) {
+                        modifierPressed = false;
+                    }
+                }
+            );
+
+            //$(window).bind('beforeunload', function (event) {
+            //    //if (refreshKeyPressed) {
+            //    //    return;
+            //    //}
+
+            //    localStorage.removeItem("REALFONT_USERINFO");                
+            //});
+            window.onbeforeunload = function (e) {
+                var e = e || window.event;
+
+                ////IE & Firefox
+                //if (e) {
+                //    e.returnValue = 'Are you sure?';
+                //}
+
+                //// For Safari
+                //return 'Are you sure?';
+                //localStorage.removeItem("REALFONT_USERINFO");
+            };
+            localStorage.removeItem("REALFONT_USERINFO");
+        }
+
+        var isAdminUser = function (user_seq) {
+            var data = {
+                user_seq: user_seq
+            };
+
+            $.ajax({
+                url: '/user/detail',
+                method: 'GET',
+                data: data,
+                success: function (result) {
+                    if (result.state == 'ok') {
+                        if (result.data.role == 1) {
+                            $('.title-admin').css('display', 'none');
+                        }
+                        else {
+                            $('.title-admin').css('display', 'block');
+                        }
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+
+                    alert('잘못된 요청입니다.');
+                    //console.log(xhr.statusText);
+                    //console.log(textStatus);
+                    //console.log(error);
+                }
+            })
+        }
+
+        // 개인용 폰트 구매 팝업 띄우기
+        var openPaymentPersonal = function (data) {
+            //alert('현재 준비중입니다.');
+            //return;
+
+            if (!checkLoginStatus()) {
+                return;
+            }
+            var paymentWindow = window.open('/payment/index?font_seqs=' + data + '\,', 'paymentpersonal', 'width=650, height=550, scrollbars=yes');
+        }
+
+        // 상업용 폰트 구매 팝업 띄우기
+        var openPaymentCommercial = function (data) {
+            //alert('현재 준비중입니다.');
+            //return;
+
+            if (!checkLoginStatus()) {
+                return;
+            }
+            var paymentWindow = window.open('/payment/index2?font_seqs=' + data + '\,', 'paymentcommercial', 'width=650, height=850, scrollbars=yes');
+        }
+
+        // 상업용 폰트 다운로드 팝업 띄우기
+        var openFreeCommercial = function (data) {
+            //alert('현재 준비중입니다.');
+            //return;
+
+            if (!checkLoginStatus()) {
+                return;
+            }
+            var paymentWindow = window.open('/payment/index3?font_seq=' + data, 'freecommercial', 'width=650, height=550, scrollbars=yes');
+        }
+
+        $(document).ready(function () {
+            //
+            // 템플릿 기본 실행 함수
+            // 
+            $('.dropdown-toggle').dropdown();
+
+            var $container = $('.portfolio-wrapper');
+
+            $container.imagesLoaded(function () {
+                $container.isotope({
+                    itemSelector: '.card',
+                    layoutMode: 'fitRows'
+                });
+            });
+
+            // Needed functions
+            var getColWidth = function () {
+                var width,
+                windowWidth = $(window).width();
+                if (windowWidth <= 480) {
+                    width = Math.floor($container.width());
+                } else if (windowWidth <= 768) {
+                    width = Math.floor($container.width());
+                } else {
+                    width = Math.floor(250);
+                }
+                return width;
+            }
+
+            function setWidths() {
+                var colWidth = getColWidth();
+                $container.children().css({ width: colWidth });
+            }
+
+
+            $(window).smartresize(function () {
+                setWidths();
+                $container.isotope({
+                    masonry: {
+                        columnWidth: getColWidth()
+                    }
+                });
+            });
+
+            $('.filter-portfolio li a').click(function () {
+                $('.filter-portfolio li.active').removeClass('active');
+                $(this).parent('li').addClass('active');
+                var selector = $(this).attr('data-filter');
+                $container.isotope({
+                    filter: selector,
+                    masonry: {}
+                });
+                return false;
+            });
+            // update columnWidth on window resize
+            $(window).smartresize(function () {
+                $container.isotope({
+                    // update columnWidth to a percentage of container width
+                    masonry: {}
+                });
+            });
+
+            //
+            // Interval
+            //
+
+            // 새로운 폰트 체크하기
+            var newFontInterval = setInterval(function () { checkNewFont() }, 60 * 1000);
+
+            //
+            // 초기화
+            //
+            
+            // 기본 CSS 수정
+            $('.page').css('margin', '0');
+            $('.page').css('max-width', '770px');
+
+            userInfo = getUserInfo();
+            // 사이드바 메뉴 유저정보 유무에 따라 보이는 항목 변경
+            if (isValid(userInfo)) {
+                $('.title-login').css('display', 'none');
+                $('.title-register').css('display', 'none');
+                $('.title-mypage').css('display', 'block');
+                $('.title-logout').css('display', 'block');
+                $('.title-cart').css('display', 'block');
+                isAdminUser(userInfo);                
+            }
+            else {
+                $('.title-login').css('display', 'block');
+                $('.title-register').css('display', 'block');
+                $('.title-mypage').css('display', 'none');
+                $('.title-logout').css('display', 'none');
+                $('.title-cart').css('display', 'none');
+                $('.title-admin').css('display', 'none');
+            }
+            // 현재 페이지에따라 사이드바 메뉴 글씨 강조색 변경
+            setActive();
+            // 결제창일 경우 사이드바 메뉴 숨김
+            hideMenu();
+            // 브랜드 목록 가져오기
+            getBrandList();
+            // 무료폰트 개수 가져오기
+            getFreeCount();
+            // 새로운 폰트 있는지 시작할때 확인하기
+            checkNewFont();
+            
+        });
+    </script>
+</body>
+</html>

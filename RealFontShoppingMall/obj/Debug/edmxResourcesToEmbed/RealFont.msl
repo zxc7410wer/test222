@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="RealFontShoppingmallModelStoreContainer" CdmEntityContainer="RealFontShoppingmallEntities">
+    <EntitySetMapping Name="Blog">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.Blog">
+        <MappingFragment StoreEntitySet="Blog">
+          <ScalarProperty Name="color" ColumnName="color" />
+          <ScalarProperty Name="important_point" ColumnName="important_point" />
+          <ScalarProperty Name="tag" ColumnName="tag" />
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="link_url" ColumnName="link_url" />
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BlogPhoto">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.BlogPhoto">
+        <MappingFragment StoreEntitySet="BlogPhoto">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="photo_url" ColumnName="photo_url" />
+          <ScalarProperty Name="blog_seq" ColumnName="blog_seq" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Brand">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.Brand">
+        <MappingFragment StoreEntitySet="Brand">
+          <ScalarProperty Name="important_point" ColumnName="important_point" />
+          <ScalarProperty Name="link_click_count" ColumnName="link_click_count" />
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="photo" ColumnName="photo" />
+          <ScalarProperty Name="brand_url" ColumnName="brand_url" />
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Cs">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.Cs">
+        <MappingFragment StoreEntitySet="Cs">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="text" ColumnName="text" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Font">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.Font">
+        <MappingFragment StoreEntitySet="Font">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="important_point" ColumnName="important_point" />
+          <ScalarProperty Name="click_count" ColumnName="click_count" />
+          <ScalarProperty Name="link_url" ColumnName="link_url" />
+          <ScalarProperty Name="intro" ColumnName="intro" />
+          <ScalarProperty Name="info" ColumnName="info" />
+          <ScalarProperty Name="file_url" ColumnName="file_url" />
+          <ScalarProperty Name="seller_name" ColumnName="seller_name" />
+          <ScalarProperty Name="period" ColumnName="period" />
+          <ScalarProperty Name="format" ColumnName="format" />
+          <ScalarProperty Name="os" ColumnName="os" />
+          <ScalarProperty Name="price_commercial" ColumnName="price_commercial" />
+          <ScalarProperty Name="price" ColumnName="price" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+          <ScalarProperty Name="is_free" ColumnName="is_free" />
+          <ScalarProperty Name="brand_seq" ColumnName="brand_seq" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FontPhoto">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.FontPhoto">
+        <MappingFragment StoreEntitySet="FontPhoto">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="photo_url" ColumnName="photo_url" />
+          <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MyFont">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.MyFont">
+        <MappingFragment StoreEntitySet="MyFont">
+          <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="purchased_at" ColumnName="purchased_at" />
+          <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+          <ScalarProperty Name="user_seq" ColumnName="user_seq" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Payment">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.Payment">
+        <MappingFragment StoreEntitySet="Payment">
+          <ScalarProperty Name="paid_at" ColumnName="paid_at" />
+          <ScalarProperty Name="fontids" ColumnName="fontids" />
+          <ScalarProperty Name="ok" ColumnName="ok" />
+          <ScalarProperty Name="is_personal" ColumnName="is_personal" />
+          <ScalarProperty Name="purpose" ColumnName="purpose" />
+          <ScalarProperty Name="company_phone" ColumnName="company_phone" />
+          <ScalarProperty Name="company_name" ColumnName="company_name" />
+          <ScalarProperty Name="company_email" ColumnName="company_email" />
+          <ScalarProperty Name="company_number" ColumnName="company_number" />
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="price" ColumnName="price" />
+          <ScalarProperty Name="product" ColumnName="product" />
+          <ScalarProperty Name="method" ColumnName="method" />
+          <ScalarProperty Name="font_seq" ColumnName="font_seq" />
+          <ScalarProperty Name="user_seq" ColumnName="user_seq" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="User">
+      <EntityTypeMapping TypeName="RealFontShoppingmallModel.User">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="point" ColumnName="point" />
+          <ScalarProperty Name="gender" ColumnName="gender" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="password" ColumnName="password" />
+          <ScalarProperty Name="login_id" ColumnName="login_id" />
+          <ScalarProperty Name="role_type" ColumnName="role_type" />
+          <ScalarProperty Name="seq" ColumnName="seq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,457 @@
+﻿<script type="text/javascript">
+    // 장바구니 담기
+    var addCart = function (font_seq, is_personal) {
+        // 장바구니 추가 api 넣기
+        var data = {
+            user_seq: getUserInfo(),
+            font_seq: font_seq,
+            is_personal: is_personal
+        };
+        //console.log(data);
+
+        if (!checkLoginStatus()) {
+            return;
+        }
+
+        var cartConfirm = confirm('해당 상품을 장바구니에 담으시겠습니까?');
+        if (!cartConfirm) {
+            return;
+        }
+        
+        loadingStart();
+
+        $.ajax({
+            url: '/font/AddCart',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'duplicated') {
+                    alert('이미 장바구니에 등록된 상품입니다.');
+                }
+
+                if (result.state == 'purchased') {
+                    alert('이미 구매한 상품입니다.');
+                }
+
+                if (result.state == 'ok') {
+                    alert('장바구니에 등록되었습니다.');
+                }
+                
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 개인용 무료 다운로드
+    var savePersonalFreeDownloadRecord = function(font_seq, user_seq, file_url) {
+        if(!isValid(user_seq))
+        {
+            alert('로그인 후 이용해주세요.');
+            return;
+        }
+        var data = {
+            font_seq: font_seq,
+            user_seq: user_seq
+        }
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/payment/completefreepersonal',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+
+                if (result.state == 'ok') {
+                    //var link = document.createElement("a");
+                    ////link.download = name;
+                    //link.href = file_url;
+                    //link.click(function () {
+                        
+                    //});
+                    var oIframe = window.document.createElement('iframe');
+                    var $body = jQuery(document.body);
+                    var $oIframe = jQuery(oIframe).attr({
+                        src: file_url,
+                        style: 'display:none'
+                    });
+                    $body.append($oIframe);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    var openWindow = function ( src ) {
+        console.log(src);
+
+        window.open(src);
+    }
+
+    // 폰트 상세 정보 불러오기
+    var fontIndex = function (font_seq, flag, use) {
+        var data = {
+            font_seq: font_seq,
+            flag: flag,
+            use: use
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) { 
+                loadingStop();
+
+                
+                var fontData = result;
+                //console.log(fontData);
+                var photo_count = fontData.photos.length;
+
+                if(photo_count == 1){
+                    $('#carousel-prev-btn').css('display', 'none');
+                    $('#carousel-next-btn').css('display', 'none');
+                }
+                else {
+                    $('#carousel-prev-btn').css('display', 'none');
+                    $('#carousel-next-btn').css('display', 'block');
+                }
+
+                $('#portfolio-carousel').bind('slid.bs.carousel', function (e) {
+                    var carousel_count = $('.carousel-inner').children().length;
+                    for(var index = 0; index < carousel_count; index++)
+                    {
+                        var item = $('.carousel-inner').children()[index];
+
+                        if(item.getAttribute('class').indexOf('active') > -1) {
+                            if(index == 0) {
+                                console.log(1);
+                                $('#carousel-prev-btn').css('display', 'none');
+                                $('#carousel-next-btn').css('display', 'block');
+                            }
+
+                            else if(index == carousel_count - 1) {
+                                console.log('last');
+                                $('#carousel-prev-btn').css('display', 'block');
+                                $('#carousel-next-btn').css('display', 'none');
+                            }
+
+                            else {
+                                $('#carousel-prev-btn').css('display', 'block');
+                                $('#carousel-next-btn').css('display', 'block');
+                            }
+                        }
+                    }
+                });
+                for(var index = 0; index < photo_count; index++)
+                {
+                    // 사진추가
+                    var item = fontData.photos[index];
+                    var appendData = '';
+                    if(index == 0) {
+                        appendData += '<div class="item active">';
+                    }
+                    appendData += '<div class="item">';
+                    appendData += ('<img style="height:400px; cursor:pointer" onclick="openWindow(this.src)" src="' + item + '" alt="" title="'+fontData.name + '" />');
+                    appendData += ('</div>');
+                    $('.carousel-inner').append(appendData);
+
+                    // carousel indicator 추가
+                    if(index == 0) {
+                        var appendData2 = '<li style="margin-right:3px;" data-target="#portfolio-carousel" data-slide-to="' + index + '" class="active"></li>'
+                        $('.carousel-indicators').append(appendData2);
+                    }
+                    else {
+                        var appendData2 = '<li style="margin-right:3px;" data-target="#portfolio-carousel" data-slide-to="' + index + '" class=""></li>'
+                        $('.carousel-indicators').append(appendData2);
+                    }
+                    
+                }
+
+                // 폰트 정보
+                $('.page-header h1').html(fontData.name);
+                $('.lead').html(fontData.info);
+                $('li.created-at').html('등록일: ' + fontData.created_at);
+                if(isValid(fontData.brand_info))
+                {
+                    $('li.seller-name').html('판매자: ' + '<a target="_blank" href="' + fontData.brand_info.brand_url + '">' + fontData.brand_info.name);
+                }
+                else
+                {
+                    $('li.seller-name').html('판매자: ' + '<a href="#none">' + "없음");
+                }
+                
+                $('li.format').html('포맷: ' + fontData.format);
+                // 사용기간
+                if(fontData.period == 0){
+                    $('li.period').html('사용기간: 무제한');
+                }
+                else {
+                    if(fontData.is_personal == 2){
+                        $('li.period').html('사용기간: 무제한(개인)' + fontData.period + '개월(상업)');
+                    }
+                    else {
+                        $('li.period').html('사용기간: ' + fontData.period + '개월');
+                    }
+                }
+
+                // 가격
+                var fontUse = '';
+                if(fontData.is_personal == 1){
+                    fontUse = '개인';
+                    if(fontData.price == 0){
+                        $('li.price').html('가격: 무료');
+                    }
+                    else {
+                        $('li.price').html('가격: ' + (fontData.price / 1.1).toFixed(0) + '원 (부가세 별도)');
+                    }
+                }
+                if(fontData.is_personal == 0){
+                    fontUse = '상업';
+                    if(fontData.price_commercial == 0){
+                        $('li.price').html('가격: 무료');
+                    }
+                    else {
+                        $('li.price').html('가격: ' + (fontData.price_commercial / 1.1).toFixed(0) + '원 (부가세 별도)');
+                    }
+                }
+                if(fontData.is_personal == 2){
+                    $('li.price').html('가격: ' + (fontData.price / 1.1).toFixed(0) + '원(개인)(부가세 별도),' + (fontData.price_commercial / 1.1).toFixed(0) + '원(상업)(부가세 별도)');
+                    fontUse = '개인,상업';
+                }
+                $('li.font-use').html('용도: ' + fontUse);
+
+                // 장바구니 담기
+                // 상업용
+                if(fontData.is_personal == 0){
+                    if(fontData.price_commercial > 0) {
+                        var appendData2 = '<li><a onclick="addCart(' + fontData.font_seq + ', 0)" href="#none" class="btn btn-default">장바구니에 담기</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData2);
+                    }
+                }
+                // 개인용
+                if(fontData.is_personal == 1){
+                    if(fontData.price > 0) {
+                        var appendData2 = '<li><a onclick="addCart(' + fontData.font_seq + ', 1)" href="#none" class="btn btn-default">장바구니에 담기</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData2);
+                    }
+                }
+                // 혼합
+                if(fontData.is_personal == 2){
+                    if(fontData.price > 0) {
+                        var appendData2 = '<li><a onclick="addCart(' + fontData.font_seq + ', 1)" href="#none" class="btn btn-default">장바구니에 담기(개인용)</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData2);
+                    }
+
+                    if(fontData.price_commercial > 0) {
+                        var appendData2 = '<li><a onclick="addCart(' + fontData.font_seq + ', 0)" href="#none" class="btn btn-default">장바구니에 담기(상업용)</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData2);
+                    }
+                }
+
+                // 공유 블로그 링크
+                if( isValid(fontData.link_url) ){
+                    var appendData5 = '<li><a target="_blank" href="' + fontData.link_url + '" class="btn btn-default">폰트더보기</a></li>';
+                    $('.list-unstyled.post-meta').append(appendData5);
+                }
+
+                // 구매 및 다운로드
+                // 개인용
+                if(fontData.is_personal == 1){
+                    // 무료폰트는 다운로드
+                    if(fontData.price == 0){
+                        if(isValid(fontData.file_url)) {
+                            var user_seq = getUserInfo();
+                            var appendData3 = '<li><a onclick="savePersonalFreeDownloadRecord('+ fontData.font_seq + ',' + user_seq + ',\'' + fontData.file_url + '\')" href="#none" class="btn btn-default">다운로드</a></li>';
+                            $('.list-unstyled.post-meta').append(appendData3);
+                        }
+                    }
+                        // 유료는 구매
+                    else {
+                        var appendData3 = '<li><a onclick="openPaymentPersonal('+ fontData.font_seq + ')" href="#none" class="btn btn-default">즉시구매</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData3);
+                    }
+                }
+                // 상업용
+                if(fontData.is_personal == 0){
+                    // 무료폰트는 다운로드
+                    if(fontData.price_commercial == 0){
+                        if(isValid(fontData.file_url)) {
+                            //var user_seq = getUserInfo();
+                            //var appendData3 = '<li onclick="openFreeDownloadPopup(' + fontData.font_seq + ',' + user_seq + ')"><a href="#none" class="btn btn-default">다운로드</a></li>';
+                            var appendData3 = '<li onclick="openFreeCommercial(' + fontData.font_seq + ')"><a href="#none" class="btn btn-default">다운로드</a></li>';
+                            $('.list-unstyled.post-meta').append(appendData3);
+                        }
+                    }
+                        // 유료는 구매
+                    else {
+                        var user_seq = getUserInfo();
+                        //var appendData3 = '<li><a onclick="openNoneFreeDownloadPopup(' + fontData.font_seq + ',' + user_seq + ')" href="#none" class="btn btn-default">즉시구매</a></li>';
+                        var appendData3 = '<li><a onclick="openPaymentCommercial(' + fontData.font_seq + ')" href="#none" class="btn btn-default">즉시구매</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData3);
+                    }
+                }
+                // 개인,상업용 둘다
+                if(fontData.is_personal == 2){
+                    // 무료
+                    if(fontData.price == 0) {
+                        if(isValid(fontData.file_url)) {
+                            var user_seq = getUserInfo();
+                            // 개인용
+                            var appendData3 = '<li><a onclick="savePersonalFreeDownloadRecord('+ fontData.font_seq + ',' + user_seq + ',\'' + fontData.file_url + '\')" href="#none" class="btn btn-default">다운로드(개인용)</a></li>';
+                            $('.list-unstyled.post-meta').append(appendData3);
+
+                            // 상업용
+                            //var appendData3 = '<li onclick="openFreeDownloadPopup(' + fontData.font_seq + ',' + user_seq + ')"><a href="#none" class="btn btn-default">다운로드(상업용)</a></li>';
+                            var appendData3 = '<li onclick="openFreeCommercial(' + fontData.font_seq + ')"><a href="#none" class="btn btn-default">다운로드(상업용)</a></li>';
+                            $('.list-unstyled.post-meta').append(appendData3);
+                        }
+                    }
+                    // 유료
+                    else {
+                        var user_seq = getUserInfo();
+                        // 개인용
+                        var appendData3 = '<li><a onclick="openPaymentPersonal('+ fontData.font_seq + ')" href="#none" class="btn btn-default">즉시구매(개인용)</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData3);
+
+                        // 상업용
+                        //var appendData3 = '<li><a onclick="openNoneFreeDownloadPopup(' + fontData.font_seq + ',' + user_seq + ')" href="#none" class="btn btn-default">즉시구매(상업용)</a></li>';
+                        var appendData3 = '<li><a onclick="openPaymentCommercial(' + fontData.font_seq + ')" href="#none" class="btn btn-default">즉시구매(상업용)</a></li>';
+                        $('.list-unstyled.post-meta').append(appendData3);
+                    }
+                }
+
+                
+                // 폰트정보
+                var appendData4 = '<p>' + fontData.info + '</p>';
+                $('.post-content').append(appendData4);
+
+                // 이전 폰트
+                var prevData = fontData.prev_font;
+                var prevAppendData = '<small><span class="fa fa-chevron-left"></span>Previous</small>';
+                prevAppendData += '<h3><a href="/font/index?font_seq='+ prevData.font_seq + '&flag=' + flag + '&use=' + prevData.is_personal + '">' + prevData.name + '</a></h3>';
+                prevAppendData += '<p><span class="fa fa-calendar"></span>' + prevData.created_at + '</p>';
+                $('.pager .prev').append(prevAppendData);
+                if(!isValid(fontData.prev_font.name)) {
+                    $('.pager .prev').css('visibility', 'hidden');
+                }
+
+                // 다음 폰트
+                var nextData = fontData.next_font;
+                var nextAppendData = '<small>Next<span class="fa fa-chevron-right"></span></small>';
+                nextAppendData += '<h3><a href="/font/index?font_seq='+ nextData.font_seq + '&flag=' + flag + '&use=' + nextData.is_personal + '">' + nextData.name + '</a></h3>';
+                nextAppendData += '<p><span class="fa fa-calendar"></span>' + nextData.created_at + '</p>';
+                $('.pager .next').append(nextAppendData);
+                if(!isValid(fontData.next_font.name)) {
+                    $('.pager .next').css('visibility', 'hidden');
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        var font_seq = @ViewBag.font_seq;
+        var flag = @ViewBag.flag;
+        var use = @ViewBag.use;
+        fontIndex(font_seq, flag, use);
+    });
+</script>
+<div class="col-md-9 content portfolio item">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <div id="portfolio-carousel" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        @*<li data-target="#portfolio-carousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#portfolio-carousel" data-slide-to="1"></li>
+                        <li data-target="#portfolio-carousel" data-slide-to="2"></li>*@
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        @*<div class="item active">
+                            <img src="../Content/img/sample/elephants-dream/rf11.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->
+                        <div class="item">
+                            <img src="../Content/img/sample/elephants-dream/rf22.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->
+                        <div class="item">
+                            <img src="../Content/img/sample/elephants-dream/rf33.png" alt="" title="RF질질이" />
+                        </div><!-- end item -->*@
+                    </div>
+                    <!-- Controls -->
+                    <a id="carousel-prev-btn" class="left carousel-control" href="#portfolio-carousel" data-slide="prev">
+                        <span class="fa fa-chevron-left"></span>
+                    </a>
+                    <a id="carousel-next-btn" class="right carousel-control" href="#portfolio-carousel" data-slide="next">
+                        <span class="fa fa-chevron-right"></span>
+                    </a>
+                </div><!-- end carousel -->
+                <h1>RF질질이</h1>
+                <p class="lead">시험삼아 처음 만들어보게 된 폰트 처음엔 폰트로 만들 생각은 아니었는데 결과물이 생각보다 마음에 들어서 올리게 되었습니다. </p>
+            </div><!-- end page-header -->
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="list-unstyled post-meta">
+                        <li class="created-at"><span class="fa fa-calendar"></span>등록일 : 2015-10-25</li>
+                        <li class="seller-name"><span class="fa fa-list-ul"></span>판매자: <a href="#none">장경호</a></li>
+                        <li class="os"><span class="fa fa-list-ul"></span>OS : windows, mac</li>
+                        <li class="format"><span class="fa fa-list-ul"></span>포맷 : TTF</li>
+                        <li class="period"><span class="fa fa-list-ul"></span>사용기간: 1년</li>
+                        <li class="price"><span class="fa fa-list-ul"></span>가격 : 5,500원</li>
+                        <li class="font-use"><span class="fa fa-list-ul"></span>용도 : </li>
+                        @*<li><a onclick="addCart()" href="#none" class="btn btn-default">장바구니에 담기</a></li>*@
+                        @*<li><a onclick="openPayment(0)" href="#none" class="btn btn-default">즉시구매</a></li>*@
+                    </ul><!-- end post-meta -->
+                </div><!-- end col -->
+                <div class="col-md-8">
+                    <div class="post-content">
+                        <h3>폰트 소개</h3>
+                        @*<p>With Blender originating as an in-house creation tool, the day-to-day feedback and interaction of both developing and using the software was one of its most outstanding features.</p>
+                        <p>In the past 2.5 years of open source development, it was especially this uniqueness of Blender that has proven to be difficult to organise and maintain. The Blender Foundation itself has no intention to grow or expand into a company or studio; such a development would conflict with the public benefit goals. Instead, the Foundation aims at endorsing and supporting activities within (educational) institutes, universities and companies.</p>
+                        <p>It is our conviction that establishing - content targeted - incidental, independent and temporal projects will be a strong boost for open source development strategies in general. Daily interaction of artists and developers can not only result in proof of concepts, but also in research of innovative solutions for the whole range of tools artists can deploy.</p>
+                        <p>By keeping such projects content focused and temporal, it also is possible for a wide range of currently active volunteers to participate. Not many people are in a position to give up a career (study, job) to become full-time employed on the projects of their interest. But there are many active volunteers prepared and motivated to do this incidentally for shorter time spans.</p>
+                        <p>Whilst Project Orange’s prime target is to create an outstanding movie short, the secondary goal is to research efficient ways to increase quality of Open Source projects in general.</p>*@
+                    </div><!-- end col -->
+                </div><!-- end row -->
+            </div><!-- end post-content -->
+        </article>
+        <ul class="pager">
+            <li class="prev">
+                @*<small><span class="fa fa-chevron-left"></span>Previous</small>
+                <h3><a href="/font/index">RF장경호</a></h3>
+                <p><span class="fa fa-calendar"></span>2015-10-23</p>*@
+            </li>
+            <li class="next">
+                @*<small>Next<span class="fa fa-chevron-right"></span></small>
+                <h3><a href="/font/index">RF이민재</a></h3>
+                <p><span class="fa fa-calendar"></span>2015-10-28</p>*@
+            </li>
+        </ul>
+    </div><!-- end post -->
+</div><!-- end col -->

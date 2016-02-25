@@ -1,0 +1,89 @@
+﻿<script type="text/javascript">
+    var brand_seq = @ViewBag.brand_seq;
+    var getBrandFont = function (brand_seq) {
+        var data = {
+            brand_seq: brand_seq,
+            page: 1
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/fonts',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //console.log(result.data);
+                    var appendTitle = '';
+                    if (brand_seq == 0) {
+                        appendTitle += '<h2 id="scrollspy-folder" style="font-family: \'Montez\', cursive;">브랜드 폰트(전체보기)</h2>';
+                        appendTitle += '<p>모든 브랜드들의 폰트입니다.</p>';
+                    }
+                    else {
+                        if(result.data[0].brand_info != null) {
+                            appendTitle += '<h2 id="scrollspy-folder" style="font-family: \'Montez\', cursive;">' + result.data[0].brand_info.name + '</h2>';
+                            appendTitle += '<p>' + result.data[0].brand_info.name + '의 폰트입니다.</p>';
+                        }
+                    }
+                    $(appendTitle).appendTo('.portfolio-wrapper');
+
+                    for (var index = 0; index < result.data.length; index++) {
+                        var item = result.data[index];
+                        var appendData = '<div class="card film art">';
+                        appendData += ('<a href="/font/index?font_seq=' + item.font_seq + '&flag=2' + '&use=' + item.is_personal + '" class="thumb">');
+                        appendData += ('<img style="height: 180px;" src="' + item.photos[0] + '" alt="" title="" />');
+                        appendData += ('<span class="overlay"><span class="fa fa-search"></span></span>');
+                        appendData += ('</a>');
+                        appendData += ('<div class="card-body">');
+                        appendData += ('<h2><a href="/font/index?font_seq=' + item.font_seq + '&flag=2' + '&use=' + item.is_personal + '">' + item.name + '</a></h2>');
+                        appendData += ('<p>' + item.intro + '</p>');
+                        appendData += ('</div>');
+                        appendData += ('<div class="card-footer">');
+                        appendData += ('<ul class="list-inline filters">');
+                        if (item.brand_info != null) {
+                            appendData += ('<li><a href="#none">' + '#' + item.brand_info.name + '</a></li>');
+                        }
+                        //if(item.price == 0){
+                        //    appendData += ('<li><a href="#none">#무료</a></li>');
+                        //}
+                        //else {
+                        //    appendData += ('<li><a href="#none">#' + item.price + '원</a></li>');
+                        //}
+
+                        if(item.is_personal == 1){
+                            appendData += ('<li><a href="#none">#개인</a></li>');
+                        }
+                        if(item.is_personal == 0) {
+                            appendData += ('<li><a href="#none">#상업</a></li>');
+                        }
+                        if(item.is_personal == 2) {
+                            appendData += ('<li><a href="#none">#개인#상업</a></li>');
+                        }
+                        appendData += ('</ul></div></div>');
+                        //$('.portfolio-wrapper').append(appendData);
+                        $(appendData).appendTo('.portfolio-wrapper');
+                    }
+                    setBrandActive(brand_seq);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    $(document).ready(function () {
+        getBrandFont(brand_seq);
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="portfolio-wrapper">
+        
+    </div><!-- end portfolio-wrapper -->
+</div>

@@ -1,0 +1,95 @@
+﻿<script type="text/javascript">
+    var loginId = '';
+    var password = '';
+
+    // 로그인하기
+    var login = function () {
+        loginId = $('#inputLoginId').val();
+        password = $('#inputPassword').val();
+
+        var data = {
+            login_id: loginId,
+            password: password
+        };
+        //console.log(data);
+
+        if (!isValid(loginId)) {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+
+        if (!isValid(password)) {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/login',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                if (result.state == 'ok') {
+                    setUserInfo(result.data);
+                    if ($('input[name="keepLogin"]').is(':checked')) {
+                        setLoginStatus(true);
+                    } else {
+                        setLoginStatus(false);
+                    }
+                    location.href = '/home/index';
+                }
+                if (result.state == 'no user') {
+                    loadingStop();
+                    alert('해당 계정이 없습니다.');
+                }
+                if (result.state == 'wrong password') {
+                    loadingStop();
+                    alert('비밀번호가 틀렸습니다.');
+                }
+                return;
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // Init
+    $(document).ready(function () {
+        
+    });
+</script>
+
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            @*<div class="page-header">
+                <h1>로그인</h1>
+                <p class="lead">A range of form inputs, elements and buttons.</p>
+            </div>*@<!-- end page-header -->
+
+            <h3>로그인</h3>
+            <form class="form" role="form">
+                <div class="form-group">
+                    <label class="sr-only" for="exampleInputEmail2">아이디</label>
+                    <input type="text" class="form-control width-200" onkeyup="event.keyCode == 13 ? login() : ''" id="inputLoginId" placeholder="로그인 ID" />
+                </div><!-- end form group -->
+                <div class="form-group">
+                    <label class="sr-only" for="exampleInputPassword2">비밀번호</label>
+                    <input type="password" class="form-control width-200" onkeyup="event.keyCode == 13 ? login() : ''" id="inputPassword" placeholder="비밀번호" />
+                </div><!-- end form group -->
+                <label class="checkbox width-100">
+                    <input name="keepLogin" type="checkbox" checked value="">
+                    <span></span>
+                    로그인 유지
+                </label>
+                <button type="button" onclick="login()" class="btn btn-default width-200">로그인</button>
+            </form>
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->

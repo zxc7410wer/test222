@@ -1,0 +1,159 @@
+﻿<script type="text/javascript">
+    //var getAllFont = function () {
+    //    var data = {
+    //        flag: 0,
+    //        use: 2,
+    //        page: 1
+    //    };
+    //    //console.log(data);
+
+    //    loadingStart();
+
+    //    $.ajax({
+    //        url: '/font/list',
+    //        method: 'GET',
+    //        data: data,
+    //        success: function (result) {
+    //            loadingStop();
+    //            if (result.state == 'ok') {
+    //                //console.log(result.data);
+    //                for (var index = 0; index < result.data.length; index++) {
+    //                    var item = result.data[index];
+    //                    var appendData = '<div class="card film art">';
+    //                    appendData += ('<a href="/font/index?font_seq=' + item.font_seq + '&flag=0' + '&use=2' + '" class="thumb">');
+    //                    appendData += ('<img style="height: 180px;" src="' + item.photos[0] + '" alt="" title="" />');
+    //                    appendData += ('<span class="overlay"><span class="fa fa-search"></span></span>');
+    //                    appendData += ('</a>');
+    //                    appendData += ('<div class="card-body">');
+    //                    appendData += ('<h2><a href="/font/index?font_seq=' + item.font_seq + '&flag=0' + '&use=2' + '">' + item.name + '</a></h2>');
+    //                    appendData += ('<p>' + item.intro + '</p>');
+    //                    appendData += ('</div>');
+    //                    appendData += ('<div class="card-footer">');
+    //                    appendData += ('<ul class="list-inline filters">');
+    //                    if (item.brand_info != null) {
+    //                        appendData += ('<li><a href="#none">' + '#' + item.brand_info.name + '</a></li>');
+    //                    }
+
+    //                    if (item.is_free == 1) {
+    //                        appendData += ('<li><a href="#none">#무료</a></li>');
+    //                    }
+    //                    else {
+    //                        appendData += ('<li><a href="#none">#' + item.price + '원</a></li>');
+    //                    }
+
+    //                    if (item.is_personal == 1) {
+    //                        appendData += ('<li><a href="#none">#개인</a></li>');
+    //                    }
+    //                    if (item.is_personal == 0) {
+    //                        appendData += ('<li><a href="#none">#상업</a></li>');
+    //                    }
+
+    //                    appendData += ('</ul></div></div>');
+    //                    //$('.portfolio-wrapper').append(appendData);
+    //                    $(appendData).appendTo('.portfolio-wrapper');
+    //                }
+    //            }
+    //        },
+    //        error: function (xhr, textStatus, error) {
+    //            loadingStop();
+    //            alert('잘못된 요청입니다.');
+    //            //console.log(xhr.statusText);
+    //            //console.log(textStatus);
+    //            //console.log(error);
+    //        }
+    //    })
+    //}
+    var getBlogs = function () {
+        var data = {
+            page: 1
+        };
+
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //console.log(result.data);
+                    for (var index = 0; index < result.data.length; index++) {
+                        var item = result.data[index];
+                        var appendData = '<div class="card film art">';
+                        appendData += ('<a target="_blank" href="' + item.link_url + '" class="thumb">');
+                        appendData += ('<img style="height: 180px;" src="' + item.photos[0] + '" alt="" title="" />');
+                        appendData += ('<span class="overlay"><span class="fa fa-search"></span></span>');
+                        appendData += ('</a>');
+                        appendData += ('<div class="card-body">');
+                        if (isValid(item.color)) {
+                            appendData += ('<h2><a target="_blank" style="color:' + item.color + '" href="' + item.link_url + '">' + item.name + '</a></h2>');
+                        }
+                        else {
+                            appendData += ('<h2><a target="_blank" href="' + item.link_url + '">' + item.name + '</a></h2>');
+                        }
+
+                        appendData += ('<p>' + item.info + '</p>');
+                        appendData += ('</div>');
+                        appendData += ('<div class="card-footer">');
+                        appendData += ('<ul class="list-inline filters">');
+
+                        var splited = item.tags.split('#');
+                        if (splited.length != 0) {
+                            for (var index2 = 0; index2 < splited.length; index2++)
+                            {
+                                var tag = splited[index2];
+                                if (isValid(tag)) {
+                                    appendData += ('<li><a href="#none">#' + tag + '</a></li>');
+                                }
+                            }
+                        }
+                        appendData += ('</ul></div></div>');
+                        //$('.portfolio-wrapper').append(appendData);
+                        $(appendData).appendTo('.portfolio-wrapper');
+                    }
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    $(document).ready(function () {
+        getBlogs();
+        //getAllFont();
+        //windowUnloadLoginStatus();
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="portfolio-wrapper all">
+        @*<div class="page-header">
+                <h1>사용설명서</h1>
+            </div>*@<!-- end page-header -->
+        <h2 id="scrollspy-folder" style="font-family: 'Montez', cursive;">공유블로그</h2>
+        <p>아래 블로그들은 리얼폰트의 폰트들을 무료로 공유하고 있는 블로그들 입니다. <br>해당 링크로 이동하시면 폰트를 다운받으실 수 있습니다</p>
+        @*<div class="card film art">
+                <a href="/font/index" class="thumb">
+                    <img src="../Content/img/sample/sintel/haru.jpg" alt="" title="" />
+                    <span class="overlay"><span class="fa fa-search"></span></span>
+                </a>
+                <div class="card-body">
+                    <h2><a href="/font/index">THE하루</a></h2>
+
+                    <p>시험삼아 처음 만들어보게 된 폰트 처음엔 폰트로 만들 생각은 아니었는데 결과물이 생각보다 마음에 들어서..</p>
+                </div><!-- end card-body -->
+                <div class="card-footer">
+                    <ul class="list-inline filters">
+                        <li><a href="#none">#장경호</a></li>
+                        <li><a href="#none">#무료</a></li>
+                    </ul>
+                </div><!-- end card-footer -->
+            </div><!-- end card -->*@
+
+    </div><!-- end portfolio-wrapper -->
+
+</div>

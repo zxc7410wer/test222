@@ -1,0 +1,2135 @@
+﻿<script type="text/javascript">
+
+    var cancel = function () {
+        location.href = '/home/index';
+    }
+
+    // 폰트 등록시 브랜드 목록 가져오기
+    var brands = function (flag, font_seq, callback) {
+        loadingStart();
+        $.ajax({
+            url: '/brand/list',
+            method: 'GET',
+            data: {},
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    if(flag == 1){
+                        $('#add_font_brand_seq').empty();
+                        var appendDataInit = ('<option value="0">' + '브랜드없음' + '</option>');
+                        $('#add_font_brand_seq').append(appendDataInit);
+                        for (var index = 0; index < result.data.length; index++)
+                        {
+                            var item = result.data[index];
+                            var appendData = ('<option value="' + item.brand_seq + '">' + item.name + '</option>');
+                            $('#add_font_brand_seq').append(appendData);
+                        }
+                    }
+                    else {
+                        $('#edit_font_brand_seq').empty();
+                        var appendDataInit = ('<option value="0">' + '브랜드없음' + '</option>');
+                        $('#edit_font_brand_seq').append(appendDataInit);
+                        for (var index = 0; index < result.data.length; index++)
+                        {
+                            var item = result.data[index];
+                            var appendData = ('<option value="' + item.brand_seq + '">' + item.name + '</option>');
+                            $('#edit_font_brand_seq').append(appendData);
+                        }
+                    }
+
+                    if(typeof callback === 'function') {
+                        if(flag == 1){
+                            callback();
+                        }
+                        else {
+                            callback(font_seq);
+                        }
+                    }
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        });
+    }
+
+    // 폰트가져오기
+    var getFont = function () {
+        
+        var data = {
+            
+        };
+        //console.log(data);
+
+        loadingStart();
+        $.ajax({
+            url: '/font/AdminList',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.name + '</td>');
+                        if(item.is_personal == 0) {
+                            var price_string = '';
+                            if(item.price_commercial == 0)
+                            {
+                                price_string = '무료';
+                            }
+                            else {
+                                price_string = item.price_commercial + '원';
+                            }
+                            appendData += ('<td>' + price_string + '</td>');
+                        }
+                        if(item.is_personal == 1) {
+                            var price_string = '';
+                            if(item.price == 0)
+                            {
+                                price_string = '무료';
+                            }
+                            else {
+                                price_string = item.price + '원';
+                            }
+                            appendData += ('<td>' + price_string + '</td>');
+                        }
+
+                        if(item.is_personal == 2) {
+                            var price_string = '';
+                            if(item.price == 0)
+                            {
+                                price_string = '무료(개인)';
+                            }
+                            else {
+                                price_string = item.price + '원(개인)';
+                            }
+
+                            var price_commercial_string = '';
+                            if(item.price_commercial == 0)
+                            {
+                                price_commercial_string = '무료(상업)';
+                            }
+                            else {
+                                price_commercial_string = item.price_commercial + '원(상업)';
+                            }
+
+                            appendData += ('<td>' + price_string + '/' + price_commercial_string + '</td>');
+                        }
+
+                        
+                        if(item.is_personal == 1) {
+                            appendData += ('<td>' + '개인용' + '</td>');
+                        }
+                        if(item.is_personal == 0) {
+                            appendData += ('<td>' + '상업용' + '</td>');
+                        }
+                        if(item.is_personal == 2) {
+                            appendData += ('<td>' + '개인/상업용' + '</td>');
+                        }
+
+                        if(item.click_count != null){
+                            appendData += ('<td>' + item.click_count + '</td>');
+                        }
+                        else {
+                            appendData += ('<td>' + '0' + '</td>');
+                        }
+
+                        if(item.important_point != null){
+                            appendData += ('<td>' + item.important_point + '</td>');
+                        }
+                        else {
+                            appendData += ('<td>' + '0' + '</td>');
+                        }
+                        
+                        appendData += ('<td>' + item.created_at + '</td>');
+                        //appendData += ('<td>' + '<a onclick="getFontDetail('+ item.font_seq +')" href="#editFont" role="button" class="btn btn-default" data-toggle="modal">수정</a>' + '<button class="btn btn-danger" onclick="deleteFont('+ item.font_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        appendData += ('<td>' + '<a onclick="brands(0,'+ item.font_seq +', getFontDetail)" href="#editFont" role="button" class="btn btn-default" data-backdrop="static"  data-toggle="modal">수정</a>' + '<button class="btn btn-danger" onclick="deleteFont('+ item.font_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        $('#font table tbody').append(appendData);
+                        //brands(0, font_seq, getFontDetail);
+                    }
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 폰트 상세
+    var getFontDetail = function (font_seq) {
+        
+        var data = {
+            font_seq: font_seq
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/DetailBySeq',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    var item = result.data;
+
+                    $('#edit_font_seq').val(font_seq);
+                    $('#edit_font_name').val(item.name);
+                    if(item.brand_info != null){
+                        $('#edit_font_brand_seq').val(item.brand_info.brand_seq);
+                    }
+                    else {
+                        $('#edit_font_brand_seq').val(0);
+                    }
+                    $('#edit_font_price').val(item.price);
+                    if(item.is_personal == 2) {
+                        $('#edit_font_price_commercial').parent().css('display', 'block');
+                        $('#edit_font_price').parent().css('display', 'block');
+                    }
+                    else if(item.is_personal == 1) {
+                        $('#edit_font_price_commercial').parent().css('display', 'none');
+                        $('#edit_font_price').parent().css('display', 'block');
+                    }
+                    else {
+                        $('#edit_font_price_commercial').parent().css('display', 'block');
+                        $('#edit_font_price').parent().css('display', 'none');
+                    }
+
+                    $('#edit_font_price_commercial').val(item.price_commercial);
+                    var $radios = $('input:radio[name=edit_use]');
+                    if (item.is_personal == 2) {
+                        $radios.filter('[value=2]').prop('checked', true);
+                    }
+                    if (item.is_personal == 1) {
+                        $radios.filter('[value=1]').prop('checked', true);
+                    }
+                    if (item.is_personal == 0) {
+                        $radios.filter('[value=0]').prop('checked', true);
+                    }
+                    $radios.change(function () {
+                        var radioValue = $(this).val();
+                        if(radioValue == 2)
+                        {
+                            $('#edit_font_price_commercial').parent().css('display', 'block');
+                            $('#edit_font_price').parent().css('display', 'block');
+                        }
+                        else if(radioValue == 1) {
+                            $('#edit_font_price_commercial').val(0);
+                            $('#edit_font_price_commercial').parent().css('display', 'none');
+                            $('#edit_font_price').parent().css('display', 'block');
+                        }
+                        else {
+                            $('#edit_font_price_commercial').parent().css('display', 'block');
+                            $('#edit_font_price').parent().css('display', 'none');
+                            $('#edit_font_price').val(0);
+                        }
+                    })
+                    $('#edit_font_os').val(item.os);
+                    $('#edit_font_format').val(item.format);
+                    $('#edit_font_period').val(item.period);
+                    //$('#edit_font_seller_name').val(item.seller_name);
+                    $('#edit_font_intro').val(item.intro);
+                    $('#edit_font_info').val(item.info);
+                    $('#edit_font_link_url').val(item.link_url);
+                    $('#edit_font_important_point').val(item.important_point);
+                    $('#edit_font_file_url').val(item.file_url);
+
+                    $('.edit-font-photo-list').empty();
+                    for(var index = 0; index < item.photos.length; index++){
+                        var item_url = item.photos[index];
+                        var appendData = '<div class="edit-font-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + item_url + '\', 1, 0)">X</span>';
+                        appendData += '<img src="' + item_url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.edit-font-photo-list').append(appendData);
+                    }
+
+                }
+                if (result.state == 'no font') {
+                    alert('해당 폰트가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 폰트 추가
+    var addFont = function () {
+        var name = $('#add_font_name').val();
+        var brand_seq = $('#add_font_brand_seq').val();
+        var price = isValid( $('#add_font_price').val() ) ? $('#add_font_price').val() : 0;
+        var price_commercial = $('#add_font_price_commercial').val();
+        var use = $('input[name="add_use"]:checked').val();
+        var os = $('#add_font_os').val();
+        var format = $('#add_font_format').val();
+        var period = $('#add_font_period').val();
+        var seller_name = $('#add_font_seller_name').val();
+        var intro = $('#add_font_intro').val();
+        var info = $('#add_font_info').val();
+        var link_url = $('#add_font_link_url').val();
+        var important_point = $('#add_font_important_point').val();
+
+        var file_url = $('#add_font_file_url').val();
+        var photos = [];
+        $('.add-font-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photos.push(item_url);
+        });
+
+        if(!isValid(use)) {
+            alert('용도를 선택해주세요.');
+            return;
+        }
+
+        if(!isValid(important_point))
+        {
+            important_point = 0;
+        }
+
+        var data = {
+            name : name,
+            brand_seq : brand_seq,
+            is_personal : use,
+            price: price,
+            price_commercial : price_commercial,
+            os: os,
+            format: format,
+            period: period,
+            seller_name : seller_name,
+            info: info,
+            intro: intro,
+            link_url: link_url,
+            important_point: important_point,
+            photos : photos,
+            file_url : file_url
+        };
+
+        if(brand_seq == 0 || brand_seq === '0')
+        {
+            data.brand_seq = null;
+        }
+        console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/add',
+            method: 'POST',
+            data: data,
+            dataType: 'json',
+            traditional: true,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#addFont').modal('hide');
+                    $('#font table tbody').empty();
+                    brands(1,null, getFont);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 폰트 수정
+    var editFont = function () {
+        var font_seq = $('#edit_font_seq').val();
+        var name = $('#edit_font_name').val();
+        var brand_seq = $('#edit_font_brand_seq').val();
+        var price = $('#edit_font_price').val();
+        var price_commercial = $('#edit_font_price_commercial').val();
+        var use = $('input[name="edit_use"]:checked').val();
+        var os = $('#edit_font_os').val();
+        var format = $('#edit_font_format').val();
+        var period = $('#edit_font_period').val();
+        var seller_name = $('#edit_font_seller_name').val();
+        var intro = $('#edit_font_intro').val();
+        var info = $('#edit_font_info').val();
+        var link_url = $('#edit_font_link_url').val();
+        var important_point = $('#edit_font_important_point').val();
+
+        var file_url = $('#edit_font_file_url').val();
+        var photos = [];
+        $('.edit-font-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photos.push(item_url);
+        });
+
+        if(!isValid(use)) {
+            alert('용도를 선택해주세요.');
+            return;
+        }
+
+        if(!isValid(important_point))
+        {
+            important_point = 0;
+        }
+
+        var data = {
+            font_seq: font_seq,
+            name : name,
+            brand_seq : brand_seq,
+            is_personal : use,
+            price: price,
+            price_commercial : price_commercial,
+            os: os,
+            format: format,
+            period: period,
+            seller_name : seller_name,
+            info: info,
+            intro: intro,
+            link_url: link_url,
+            important_point: important_point,
+            photos : photos,
+            file_url : file_url
+        };
+
+        if(brand_seq == 0 || brand_seq === '0'){
+            data.brand_seq = null;
+        }
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/edit',
+            method: 'POST',
+            data: data,
+            traditional: true,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#editFont').modal('hide');
+                    $('#font table tbody').empty();
+                    //getFont();
+                    brands(1,null, getFont);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 폰트 삭제
+    var deleteFont = function (font_seq) {
+        var data = {
+            font_seq: font_seq
+        };
+        //console.log(data);
+
+        var deleteConfirm = confirm('삭제하시겠습니까?');
+        if(!deleteConfirm) {
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/font/delete',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#font table tbody').empty();
+                    //getFont();
+                    brands(1,null, getFont);
+                }
+                if (result.state == 'no font') {
+                    alert('해당 폰트가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    
+    // 브랜드 목록 가져오기
+    var getBrand = function () {
+
+        var data = {
+            
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    brandList = result.data;
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.name + '</td>');
+                        if(item.brand_url == null){
+                            appendData += ('<td><a href="#none">' + '없음' + '</a></td>');
+                        }
+                        else {
+                            appendData += ('<td><a target="_blank" href="' + item.brand_url + '">' + item.brand_url + '</a></td>');
+                        }
+                        appendData += ('<td>' + item.created_at + '</td>');
+                        appendData += ('<td>' + item.link_click_count + '</td>');
+                        appendData += ('<td>' + item.important_point + '</td>');
+                        appendData += ('<td>' + '<a onclick="getBrandDetail('+ item.brand_seq +')" href="#editBrand" role="button" class="btn btn-default" data-backdrop="static"  data-toggle="modal">수정</a>' + '<button class="btn btn-danger" onclick="deleteBrand('+ item.brand_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        $('#brand table tbody').append(appendData);
+                        
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 브랜드 상세
+    var getBrandDetail = function (brand_seq) {
+        var data = {
+            brand_seq: brand_seq
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    var item = result.data;
+                    $('#edit_brand_seq').val(brand_seq);
+                    $('#edit_brand_name').val(item.name);
+                    $('#edit_brand_info').val(item.info);
+                    $('#edit_brand_url').val(item.brand_url);
+                    //$('#edit_brand_photo').val(item.photo);
+                    $('#edit_brand_point').val(item.important_point);
+
+                    $('.edit-brand-photo-list').empty();
+                    
+                    var appendData = '<div class="edit-brand-photo-item col-md-3">';
+                    appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + item.photo + '\', 2, 0)">X</span>';
+                    appendData += '<img src="' + item.photo + '" style="width:70px;height:70px" />';
+                    appendData += '</div>';
+                    $('.edit-brand-photo-list').append(appendData);
+
+                }
+                if (result.state == 'no brand') {
+                    alert('해당 브랜드가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 브랜드 추가
+    var addBrand = function () {
+        var name = $('#add_brand_name').val();
+        var info = $('#add_brand_info').val();
+        var brand_url = $('#add_brand_url').val();
+        //var photo = $('#add_brand_photo').val();
+        
+        var point = $('#add_brand_point').val();
+        var photo = '';
+        $('.add-brand-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photo = item_url;
+        });
+
+        var data = {
+            name: name,
+            info: info,
+            brand_url: brand_url,
+            photo: photo,
+            important_point: point
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/add',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    //$('#changePasswordModal').modal('hide');
+                    $('#addBrand').modal('hide');
+                    $('#brand table tbody').empty();
+                    getBrand();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 브랜드 수정
+    var editBrand = function () {
+        var brand_seq = $('#edit_brand_seq').val();
+        var name = $('#edit_brand_name').val();
+        var info = $('#edit_brand_info').val();
+        var brand_url = $('#edit_brand_url').val();
+        //var photo = $('#edit_brand_photo').val();
+        var point = $('#edit_brand_point').val();
+        var photo = '';
+        $('.edit-brand-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photo = item_url;
+        });
+
+        var data = {
+            brand_seq : brand_seq,
+            name: name,
+            info: info,
+            brand_url: brand_url,
+            photo: photo,
+            important_point: point
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/edit',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#editBrand').modal('hide');
+                    $('#brand table tbody').empty();
+                    getBrand();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 브랜드 삭제
+    var deleteBrand = function (brand_seq) {
+        var data = {
+            brand_seq: brand_seq
+        };
+        //console.log(data);
+
+        var deleteConfirm = confirm('삭제하시겠습니까?');
+        if(!deleteConfirm) {
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/brand/delete',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#brand table tbody').empty();
+                    getBrand();
+                }
+                if (result.state == 'no brand') {
+                    alert('해당 브랜드가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 유저 목록 가져오기
+    var getUser = function () {
+        var data = {
+            
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    cartList = result.data;
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.login_id + '</td>');
+                        if(item.gender == 1){
+                            appendData += ('<td>' + '남자' + '</td>');
+                        }
+                        else {
+                            appendData += ('<td>' + '여자' + '</td>');
+                        }
+                        appendData += ('<td>' + item.email + '</td>');
+                        appendData += ('<td>' + item.phone + '</td>');
+                        
+                        appendData += ('<td>' + '<a onclick="getUserDetail('+ item.user_seq +')" href="#editUser" role="button" class="btn btn-default"data-backdrop="static"  data-toggle="modal">수정</a>' + '<button class="btn btn-danger" onclick="deleteUser(' + item.user_seq + ')">' + '삭제' +'</button>' +  '</td></tr>');
+                        $('#user table tbody').append(appendData);
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 유저 상세
+    var getUserDetail = function (user_seq) {
+        var data = {
+            user_seq: user_seq
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    var item = result.data;
+
+                    $('#edit_user_seq').val(user_seq);
+                    $('#edit_user_loginid').val(item.login_id);
+                    $('#edit_user_email').val(item.email);
+                    $('#edit_user_phone').val(item.phone);
+                    //$('#edit_gender').val(item.gender);
+                    var $radios = $('input:radio[name=gender]');
+                    if (item.gender == 1) {
+                        $radios.filter('[value=1]').prop('checked', true);
+                    }
+                    if (item.gender == 0) {
+                        $radios.filter('[value=0]').prop('checked', true);
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 유저가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 유저 수정
+    var editUser = function () {
+        var user_seq = $('#edit_user_seq').val();
+        var login_id = $('#edit_user_loginid').val();
+        var email = $('#edit_user_email').val();
+        var phone = $('#edit_user_phone').val();
+        var gender = $('input[name="gender"]:checked').val();
+
+        var data = {
+            user_seq: user_seq,
+            login_id: login_id,
+            email: email,
+            phone: phone,
+            gender: gender
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/update',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#editUser').modal('hide');
+                    $('#user table tbody').empty();
+                    getUser();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 유저 삭제
+    var deleteUser = function (user_seq) {
+        var data = {
+            user_seq: user_seq
+        };
+        //console.log(data);
+
+        var deleteConfirm = confirm('삭제하시겠습니까?');
+        if(!deleteConfirm) {
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/unregister',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#user table tbody').empty();
+                    getUser();
+                }
+                if (result.state == 'no user') {
+                    alert('해당 유저가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 공유블로그 목록 가져오기
+    var getBlog = function () {
+
+        var data = {
+            
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.name + '</td>');
+                        if(item.link_url == null){
+                            appendData += ('<td><a href="#none">' + '없음' + '</a></td>');
+                        }
+                        else {
+                            appendData += ('<td><a target="_blank" href="' + item.link_url + '">' + item.link_url + '</a></td>');
+                        }
+                        appendData += ('<td>' + item.created_at + '</td>');
+                        appendData += ('<td>' + item.tags + '</td>');
+                        appendData += ('<td>' + item.important_point + '</td>');
+                        appendData += ('<td>' + '<a onclick="getBlogDetail('+ item.blog_seq +')" href="#editBlog" role="button" class="btn btn-default" data-backdrop="static"  data-toggle="modal">수정</a>' + '<button class="btn btn-danger" onclick="deleteBlog('+ item.blog_seq +')">' + '삭제' +'</button>' +  '</td></tr>');
+                        $('#blog table tbody').append(appendData);
+                        
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 공유블로그 상세
+    var getBlogDetail = function (blog_seq) {
+        var data = {
+            blog_seq: blog_seq
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    var item = result.data;
+
+                    $('#edit_blog_seq').val(blog_seq);
+                    $('#edit_blog_name').val(item.name);
+                    $('#edit_blog_info').val(item.info);
+                    $('#edit_blog_url').val(item.link_url);
+                    $('#edit_blog_tag').val(item.tags);
+                    $('#edit_blog_point').val(item.important_point);
+                    $('#edit_blog_colorpicker').val(item.color);
+
+                    $('.edit-blog-photo-list').empty();
+                    
+                    
+                    var appendData = '<div class="edit-blog-photo-item col-md-3">';
+                    appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + item.photo + '\', 3, 0)">X</span>';
+                    appendData += '<img src="' + item.photo + '" style="width:70px;height:70px" />';
+                    appendData += '</div>';
+                    $('.edit-blog-photo-list').append(appendData);
+
+                }
+                if (result.state == 'no blog') {
+                    alert('해당 블로그가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 블로그 추가
+    var addBlog = function () {
+        var name = $('#add_blog_name').val();
+        var info = $('#add_blog_info').val();
+        var link_url = $('#add_blog_url').val();
+        var tags = $('#add_blog_tag').val();
+        var point = $('#add_blog_point').val();
+        var color = $('#add_blog_colorpicker').val();
+
+        var photo = '';
+        $('.add-blog-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photo = item_url;
+        });
+
+        var data = {
+            name: name,
+            info: info,
+            link_url: link_url,
+            photo: photo,
+            tags: tags,
+            important_point: point,
+            color: color
+        };
+        
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/add',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#addBlog').modal('hide');
+                    $('#blog table tbody').empty();
+                    getBlog();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 블로그 수정
+    var editBlog = function () {
+        var blog_seq = $('#edit_blog_seq').val();
+        var name = $('#edit_blog_name').val();
+        var info = $('#edit_blog_info').val();
+        var link_url = $('#edit_blog_url').val();
+        var tags = $('#edit_blog_tag').val();
+        var point = $('#edit_blog_point').val();
+        var color = $('#edit_blog_colorpicker').val();
+        var photo = '';
+        $('.edit-blog-photo-item').each(function (index) {
+            var item_url = $( this ).find('img').attr('src');
+            photo = item_url;
+        });
+
+        var data = {
+            blog_seq: blog_seq,
+            name: name,
+            info: info,
+            link_url: link_url,
+            photo: photo,
+            tags: tags,
+            important_point: point,
+            color: color
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/edit',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#editBlog').modal('hide');
+                    $('#blog table tbody').empty();
+                    getBlog();
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    // 블로그 삭제
+    var deleteBlog = function (blog_seq) {
+        var data = {
+            blog_seq: blog_seq
+        };
+        //console.log(data);
+
+        var deleteConfirm = confirm('삭제하시겠습니까?');
+        if(!deleteConfirm) {
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/blog/delete',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    $('#blog table tbody').empty();
+                    getBlog();
+                }
+                if (result.state == 'no blog') {
+                    alert('해당 블로그가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 구매내역 목록 가져오기
+    var getPayment = function () {
+        var data = {
+            
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/payment/list',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    for (var index = 0; index < result.data.length; index++)
+                    {
+                        var item = result.data[index];
+                        var appendData = '<tr>' + '<td>' + (index + 1)  + '</td>';
+                        appendData += ('<td>' + item.font_name + '</td>');
+                        appendData += ('<td>' + item.user_login_id + '</td>');
+                        appendData += ('<td>' + item.font_use + '</td>');
+                        appendData += ('<td>' + item.created_at_date + '</td>');
+                        if(item.is_personal == 0)
+                        {
+                            appendData += ('<td>' + '<a onclick="getPaymentDetail('+ item.payment_seq +')" href="#detailPayment" role="button" class="btn btn-default" data-backdrop="static"  data-toggle="modal">상세보기</a>' + '</td></tr>');
+                        }
+                        else {
+                            appendData += ('<td>' + '</td></tr>');
+                        }
+                        
+                        $('#payment table tbody').append(appendData);
+                        
+                    }
+                }
+                if (result.state == 'no user') {
+                    alert('해당 계정이 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+    var getPaymentDetail = function (payment_seq) {
+        var data = {
+            payment_seq : payment_seq
+        };
+        //console.log(data);
+
+        loadingStart();
+
+        $.ajax({
+            url: '/payment/detail',
+            method: 'GET',
+            data: data,
+            success: function (result) {
+                loadingStop();
+                if (result.state == 'ok') {
+                    var item = result.data;
+
+                    $('#payment_detail_company_name').val(item.company_name);
+                    $('#payment_detail_company_number').val(item.company_number);
+                    $('#payment_detail_company_mail').val(item.company_mail);
+                    $('#payment_detail_company_phone').val(item.company_phone);
+                    $('#payment_detail_purpose').val(item.purpose);
+                }
+                if (result.state == 'no payment') {
+                    alert('정보가 없습니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                loadingStop();
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    // 탭 변경
+    var changeTab = function (index) {
+        //console.log(index);
+        if (index == 0) {
+            $('#font').css('display', 'block');
+            $('#brand').css('display', 'none');
+            $('#user').css('display', 'none');
+            $('#blog').css('display', 'none');
+            $('#payment').css('display', 'none');
+
+            $('#font-tab').addClass('active');
+            $('#brand-tab').removeClass('active');
+            $('#user-tab').removeClass('active');
+            $('#blog-tab').removeClass('active');
+            $('#payment-tab').removeClass('active');
+
+            //getFont();
+            brands(1,null, getFont);
+        }
+        if (index == 1) {
+            $('#font').css('display', 'none');
+            $('#brand').css('display', 'block');
+            $('#user').css('display', 'none');
+            $('#blog').css('display', 'none');
+            $('#payment').css('display', 'none');
+
+            $('#font-tab').removeClass('active');
+            $('#brand-tab').addClass('active');
+            $('#user-tab').removeClass('active');
+            $('#blog-tab').removeClass('active');
+            $('#payment-tab').removeClass('active');
+
+            getBrand();
+        }
+        if (index == 2) {
+            $('#font').css('display', 'none');
+            $('#brand').css('display', 'none');
+            $('#user').css('display', 'block');
+            $('#blog').css('display', 'none');
+            $('#payment').css('display', 'none');
+
+            $('#font-tab').removeClass('active');
+            $('#brand-tab').removeClass('active');
+            $('#user-tab').addClass('active');
+            $('#blog-tab').removeClass('active');
+            $('#payment-tab').removeClass('active');
+
+            getUser();
+        }
+
+        if(index == 3) {
+            $('#font').css('display', 'none');
+            $('#brand').css('display', 'none');
+            $('#user').css('display', 'none');
+            $('#blog').css('display', 'block');
+            $('#payment').css('display', 'none');
+
+            $('#font-tab').removeClass('active');
+            $('#brand-tab').removeClass('active');
+            $('#user-tab').removeClass('active');
+            $('#blog-tab').addClass('active');
+            $('#payment-tab').removeClass('active');
+
+            getBlog();
+        }
+
+        if(index == 4) {
+            $('#font').css('display', 'none');
+            $('#brand').css('display', 'none');
+            $('#user').css('display', 'none');
+            $('#blog').css('display', 'none');
+            $('#payment').css('display', 'block');
+
+            $('#font-tab').removeClass('active');
+            $('#brand-tab').removeClass('active');
+            $('#user-tab').removeClass('active');
+            $('#blog-tab').removeClass('active');
+            $('#payment-tab').addClass('active');
+
+            getPayment();
+        }
+    }
+
+    // 폰트파일 업로드
+    var fontFileUpload = function (files, flag){
+        var data = new FormData();
+        for (var x = 0; x < files.length; x++){
+            data.append("file" + x, files[x]);
+        }
+        $.ajax({
+            type: "POST",
+            url: '/file/upload',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function(result) {
+                //console.log(result.url);
+
+                if(flag == 1){
+                    $('#add_font_file_url').val(result.url);
+                }
+                else {
+                    $('#edit_font_file_url').val(result.url);
+                }
+            },
+            error: function (xhr, status, p3, p4){
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                //console.log(err);
+            }
+        });
+    }
+
+    // 사진 업로드
+    var photoUpload = function (files, type, flag) {
+        var data = new FormData();
+        for (var x = 0; x < files.length; x++){
+            data.append("file" + x, files[x]);
+        }
+        $.ajax({
+            type: "POST",
+            url: '/photo/upload',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function(result) {
+                //console.log(result.url);
+                // 폰트
+                if(type == 1)
+                {
+                    if(flag == 1){
+                        var appendData = '<div class="add-font-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 1)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.add-font-photo-list').append(appendData);
+                    }
+                    else {
+                        var appendData = '<div class="edit-font-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 0)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.edit-font-photo-list').append(appendData);
+                    }
+                }
+                // 브랜드
+                if(type == 2)
+                {
+                    if(flag == 1){
+                        $('.add-brand-photo-list').empty();
+                        var appendData = '<div class="add-brand-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 1)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.add-brand-photo-list').append(appendData);
+                    }
+                    else {
+                        $('.edit-brand-photo-list').empty();
+                        var appendData = '<div class="edit-brand-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 0)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.edit-brand-photo-list').append(appendData);
+                    }
+                }
+
+                // 공유블로그
+                if(type == 3)
+                {
+                    if(flag == 1){
+                        $('.add-blog-photo-list').empty();
+                        var appendData = '<div class="add-blog-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 1)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.add-blog-photo-list').append(appendData);
+                    }
+                    else {
+                        $('.edit-blog-photo-list').empty();
+                        var appendData = '<div class="edit-blog-photo-item col-md-3">';
+                        appendData += '<span style="position:absolute;left:80px;top:-8px" onclick="deletePhoto(\'' + result.url + '\', 0)">X</span>';
+                        appendData += '<img src="' + result.url + '" style="width:70px;height:70px" />';
+                        appendData += '</div>';
+                        $('.edit-blog-photo-list').append(appendData);
+                    }
+                }
+            },
+            error: function (xhr, status, p3, p4){
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                //console.log(err);
+            }
+        });
+    }
+
+    // 폰트사진 삭제
+    var deletePhoto = function (url, type, flag) {
+        // 폰트
+        if(type == 1)
+        {
+            if(flag == 1){
+                $('.add-font-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+            else {
+                $('.edit-font-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+        }
+
+        // 브랜드
+        if(type == 2)
+        {
+            if(flag == 1){
+                $('.add-brand-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+            else {
+                $('.edit-brand-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+        }
+        
+        // 공유블로그
+        if(type == 3)
+        {
+            if(flag == 1){
+                $('.add-blog-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+            else {
+                $('.edit-blog-photo-item').each(function (index) {
+                    var item_url = $( this ).find('img').attr('src');
+                    if(url == item_url){
+                        $(this).remove();
+                    }
+                });
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        var flag = @ViewBag.flag;
+        changeTab(flag);
+
+        // 폰트 사진 업로드
+        $("#add_font_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 1, 1);
+            }
+        });
+        $("#edit_font_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 1, 0);
+            }
+        });
+
+        // 브랜드 사진 업로드
+        $("#add_brand_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 2, 1);
+            }
+        });
+        $("#edit_brand_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 2, 0);
+            }
+        });
+
+        // 블로그 사진 업로드
+        $("#add_blog_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 3, 1);
+            }
+        });
+        $("#edit_blog_photo").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                photoUpload(this.files, 3, 0);
+            }
+        });
+
+        // 폰트 업로드
+        $("#add_font_file").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                fontFileUpload(this.files, 1);
+            }
+        });
+        $("#edit_font_file").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                fontFileUpload(this.files, 0);
+            }
+        });
+
+        $('.uneditable-input').css('border', 'none');
+        $('.uneditable-input').css('font-size', '16px');
+        $('.uneditable-input').css('box-shadow', 'none');
+        $('.uneditable-input').css('font-weight', 'bold');
+
+        $("#add_blog_colorpicker").colorpicker();
+        $("#edit_blog_colorpicker").colorpicker();
+
+        var $radios_add = $('input:radio[name=add_use]');
+        $radios_add.filter('[value=0]').prop('checked', true);
+        $('#add_font_price').parent().css('display', 'none');
+        $('#add_font_price_commercial').parent().css('display', 'block');
+        $radios_add.change(function () {
+            var radioValue = $('input[name="add_use"]:checked').val();
+            if(radioValue == 2)
+            {
+                $('#add_font_price_commercial').parent().css('display', 'block');
+                $('#add_font_price').parent().css('display', 'block');
+            }
+            else if(radioValue == 1){
+                $('#add_font_price_commercial').val(0);
+                $('#add_font_price_commercial').parent().css('display', 'none');
+                $('#add_font_price').parent().css('display', 'block');
+            }
+            else {
+                $('#add_font_price_commercial').parent().css('display', 'block');
+                $('#add_font_price').parent().css('display', 'none');
+                $('#add_font_price').val(0);
+            }
+        })
+    });
+</script>
+<div class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <h1>관리자</h1>
+                <p class="lead"></p>
+            </div><!-- end page-header -->
+            @*<h2>마이페이지</h2>*@
+            <ul class="nav nav-tabs">
+                <li id="font-tab" class="active"><a href="/admin/index?flag=0">폰트관리</a></li>
+                <li id="brand-tab"><a href="/admin/index?flag=1">브랜드관리</a></li>
+                <li id="user-tab"><a href="/admin/index?flag=2">유저관리</a></li>
+                <li id="blog-tab"><a href="/admin/index?flag=3">공유블로그관리</a></li>
+                <li id="payment-tab"><a href="/admin/index?flag=4">구매내역</a></li>
+            </ul>
+
+            <div id="font">
+                <h3>폰트 관리</h3>
+                <a style="float:right; margin-bottom: 10px;" href="#addFont" role="button" class="btn btn-default" data-backdrop="static" data-toggle="modal" >폰트 등록</a>
+                <!-- 폰트 추가 Modal -->
+                <div class="modal fade" id="addFont" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">폰트 등록</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="" for="add_font_name">폰트명</label>
+                                    <input type="text" class="form-control width-300" id="add_font_name" placeholder="폰트명" />
+                                </div><!-- end form group -->
+                                <div class="form-group brand_list">
+                                    <label class="" for="add_brand_seq">브랜드</label>
+                                    <select class="form-control width-300" id="add_font_brand_seq"></select>
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_photo">사진</label>
+                                    <div class="add-font-photo-list row">
+
+                                    </div>
+                                    <input id="add_font_photo" name="add_font_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_price">가격</label>
+                                    <input type="number" class="form-control width-300" id="add_font_price" placeholder="가격" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_price_commercial">가격(상업용)</label>
+                                    <input type="number" class="form-control width-300" id="add_font_price_commercial" placeholder="가격" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="control-label" for="add_font_use">용도</label>
+                                    <div class="controls">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="add_use" type="radio" id="add_font_use" value="1" />
+                                                    <span></span>
+                                                    개인용
+                                                </label>
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="add_use" type="radio" id="add_font_use" value="0" />
+                                                    <span></span>
+                                                    상업용
+                                                </label>
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="add_use" type="radio" id="add_font_use" value="2" />
+                                                    <span></span>
+                                                    개인,상업 전부
+                                                </label>
+                                            </div><!-- end col md -->
+                                        </div><!-- end row -->
+                                    </div><!-- end controls-->
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_os">OS</label>
+                                    <input type="text" class="form-control width-300" id="add_font_os" placeholder="OS" value="windows,mac,android" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_format">포맷</label>
+                                    <input type="text" class="form-control width-300" id="add_font_format" placeholder="포맷" value="ttf" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_period">기간</label>
+                                    <input type="number" class="form-control width-300" id="add_font_period" placeholder="기간(단위:개월)" value="0" />
+                                </div><!-- end form group -->
+                                @*<div class="form-group">
+                                    <label class="" for="add_font_seller_name">판매자</label>
+                                    <input type="text" class="form-control width-300" id="add_font_seller_name" placeholder="판매자" />
+                                </div>*@<!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_file_url">폰트파일</label>
+                                    <input type="text" class="form-control width-300" id="add_font_file_url" disabled placeholder="폰트파일" />
+                                    <input id="add_font_file" name="add_font_file" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_intro">폰트소개</label>
+                                    <input type="text" class="form-control width-300" id="add_font_intro" placeholder="폰트소개" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_info">폰트설명</label>
+                                    <input type="text" class="form-control width-300" id="add_font_info" placeholder="폰트설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_link_url">폰트 공유블로그 url</label>
+                                    <input type="text" class="form-control width-300" id="add_font_link_url" placeholder="링크 url" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_important_point">노출중요도</label>
+                                    <input type="number" class="form-control width-300" id="add_font_important_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="addFont()" class="btn btn-default">등록</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <!-- 폰트 수정 Modal -->
+                <div class="modal fade" id="editFont" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">폰트 수정</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" class="form-control width-300" id="edit_font_seq" />
+                                <div class="form-group">
+                                    <label class="" for="edit_font_name">폰트명</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_name" placeholder="폰트명" />
+                                </div><!-- end form group -->
+                                <div class="form-group brand_list">
+                                    <label class="" for="edit_font_brand_seq">브랜드</label>
+                                    <select class="form-control width-300" id="edit_font_brand_seq"></select>
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_font_photo">사진</label>
+                                    <div class="edit-font-photo-list row">
+                                        @*<div class="col-md-3">
+                                            <span style="position:absolute;left:80px;top:-8px">X</span>
+                                            <img src="http://modoomap3.cafe24.com:8667/Image/ee36ea23-2002-416f-9205-6543f996883e.png" style="width:70px;height:70px" />
+                                        </div>*@
+                                    </div>
+                                    <input id="edit_font_photo" name="edit_font_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_price">가격</label>
+                                    <input type="number" class="form-control width-300" id="edit_font_price" placeholder="가격" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_price_commercial">가격(상업용)</label>
+                                    <input type="number" class="form-control width-300" id="edit_font_price_commercial" placeholder="가격" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="control-label" for="edit_font_use">용도</label>
+                                    <div class="controls">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="edit_use" type="radio" id="edit_font_use" value="1" />
+                                                    <span></span>
+                                                    개인용
+                                                </label>
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="edit_use" type="radio" id="edit_font_use" value="0" />
+                                                    <span></span>
+                                                    상업용
+                                                </label>
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="edit_use" type="radio" id="edit_font_use" value="2" />
+                                                    <span></span>
+                                                    개인,상업 전부
+                                                </label>
+                                            </div><!-- end col md -->
+                                        </div><!-- end row -->
+                                    </div><!-- end controls-->
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_os">OS</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_os" placeholder="OS" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_format">포맷</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_format" placeholder="포맷" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_period">기간</label>
+                                    <input type="number" class="form-control width-300" id="edit_font_period" placeholder="기간(단위:개월)" />
+                                </div><!-- end form group -->
+                                @*<div class="form-group">
+                                    <label class="" for="edit_font_seller_name">판매자</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_seller_name" placeholder="판매자" />
+                                </div>*@<!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_file_url">폰트파일</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_file_url" placeholder="폰트파일" />
+                                    <input id="edit_font_file" name="edit_font_file" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_intro">폰트소개</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_intro" placeholder="폰트소개" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_info">폰트설명</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_info" placeholder="폰트설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_link_url">폰트 공유블로그 url</label>
+                                    <input type="text" class="form-control width-300" id="edit_font_link_url" placeholder="링크 url" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_font_important_point">노출중요도</label>
+                                    <input type="number" class="form-control width-300" id="edit_font_important_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="editFont()" class="btn btn-default">수정</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>이름</th>
+                            <th>가격</th>
+                            <th>용도</th>
+                            <th>폰트클릭수</th>
+                            <th>노출중요도</th>
+                            <th>등록일</th>
+                            <th>수정/삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="brand">
+                <h3>브랜드 관리</h3>
+                <a style="float:right; margin-bottom: 10px;" href="#addBrand" role="button" class="btn btn-default" data-backdrop="static" data-toggle="modal">브랜드 등록</a>
+                <!-- 브랜드 추가 Modal -->
+                <div class="modal fade" id="addBrand" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">브랜드 등록</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="" for="add_brand_name">브랜드명</label>
+                                    <input type="text" class="form-control width-300" id="add_brand_name" placeholder="브랜드명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_brand_info">브랜드 설명</label>
+                                    <input type="text" class="form-control width-300" id="add_brand_info" placeholder="브랜드 설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_brand_url">브랜드 링크</label>
+                                    <input type="text" class="form-control width-300" id="add_brand_url" placeholder="브랜드 링크" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_brand_photo">브랜드 사진</label>
+                                    @*<input type="text" class="form-control width-300" id="add_brand_photo" placeholder="브랜드 사진" />*@
+                                    <div class="add-brand-photo-list row">
+
+                                    </div>
+                                    <input id="add_brand_photo" name="add_brand_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_brand_point">노출중요도</label>
+                                    <input type="text" class="form-control width-300" id="add_brand_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="addBrand()" class="btn btn-default">등록</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <!-- 브랜드 수정 Modal -->
+                <div class="modal fade" id="editBrand" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">브랜드 수정</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" class="form-control width-300" id="edit_brand_seq" />
+                                <div class="form-group">
+                                    <label class="" for="edit_brand_name">브랜드명</label>
+                                    <input type="text" class="form-control width-300" id="edit_brand_name" placeholder="브랜드명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_brand_info">브랜드 설명</label>
+                                    <input type="text" class="form-control width-300" id="edit_brand_info" placeholder="브랜드 설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_brand_url">브랜드 링크</label>
+                                    <input type="text" class="form-control width-300" id="edit_brand_url" placeholder="브랜드 링크" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_brand_photo">브랜드 사진</label>
+                                    <div class="edit-brand-photo-list row">
+
+                                    </div>
+                                    <input id="edit_brand_photo" name="edit_brand_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_brand_point">노출중요도</label>
+                                    <input type="text" class="form-control width-300" id="edit_brand_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="editBrand()" class="btn btn-default">수정</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>이름</th>
+                            <th>링크</th>
+                            <th>등록일</th>
+                            <th>링크클릭수</th>
+                            <th>노출중요도</th>
+                            <th>수정/삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="user">
+                <h3>유저 관리</h3>
+                <!-- 유저 수정 Modal -->
+                <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">유저 정보 수정</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" class="form-control width-300" id="edit_user_seq" />
+                                <div class="form-group">
+                                    <label class="" for="edit_user_loginid">유저 아이디</label>
+                                    <input type="text" class="form-control width-300" id="edit_user_loginid" disabled placeholder="유저 아이디" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_user_email">이메일</label>
+                                    <input type="text" class="form-control width-300" id="edit_user_email" placeholder="이메일" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_user_phone">전화번호</label>
+                                    <input type="text" class="form-control width-300" id="edit_user_phone" placeholder="전화번호" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="control-label" for="edit_user_gender">성별</label>
+                                    <div class="controls">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="gender" type="radio" id="edit_user_gender" value="1" />
+                                                    <span></span>
+                                                    남
+                                                </label>
+                                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                                    <input name="gender" type="radio" id="edit_user_gender" value="0" />
+                                                    <span></span>
+                                                    여
+                                                </label>
+                                            </div><!-- end col md -->
+                                        </div><!-- end row -->
+                                    </div><!-- end controls-->
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="editUser()" class="btn btn-default">수정</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>아이디</th>
+                            <th>성별</th>
+                            <th>이메일</th>
+                            <th>전화번호</th>
+                            <th>수정/삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="blog">
+                <h3>공유 블로그 관리</h3>
+                <a style="float:right; margin-bottom: 10px;" href="#addBlog" role="button" class="btn btn-default" data-backdrop="static" data-toggle="modal">블로그 등록</a>
+                <!-- 공유 블로그 추가 Modal -->
+                <div class="modal fade" id="addBlog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">공유 블로그 등록</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="" for="add_blog_name">블로그 이름</label>
+                                    <input type="text" class="form-control width-300" id="add_blog_name" placeholder="블로그 이름" />
+                                    <input style="width:100px;" id="add_blog_colorpicker" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_blog_info">블로그 설명</label>
+                                    <input type="text" class="form-control width-300" id="add_blog_info" placeholder="블로그 설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_blog_url">블로그 링크</label>
+                                    <input type="text" class="form-control width-300" id="add_blog_url" placeholder="블로그 링크" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_blog_photo">블로그 사진</label>
+                                    @*<input type="text" class="form-control width-300" id="add_blog_photo" placeholder="대표 사진" />*@
+                                    <div class="add-blog-photo-list row">
+
+                                    </div>
+                                    <input id="add_blog_photo" name="add_blog_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_blog_tag">태그</label>
+                                    <input type="text" class="form-control width-300" id="add_blog_tag" placeholder="#무료#인기#귀여운" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="add_blog_point">노출중요도</label>
+                                    <input type="text" class="form-control width-300" id="add_blog_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="addBlog()" class="btn btn-default">등록</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <!-- 공유 블로그 수정 Modal -->
+                <div class="modal fade" id="editBlog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">공유 블로그 수정</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" class="form-control width-300" id="edit_blog_seq" />
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_name">블로그 이름</label>
+                                    <input type="text" class="form-control width-300" id="edit_blog_name" placeholder="블로그 이름" />
+                                    <input style="width:100px;" id="edit_blog_colorpicker" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_info">블로그 설명</label>
+                                    <input type="text" class="form-control width-300" id="edit_blog_info" placeholder="블로그 설명" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_url">블로그 링크</label>
+                                    <input type="text" class="form-control width-300" id="edit_blog_url" placeholder="링크" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_photo">블로그 사진</label>
+                                    @*<input type="text" class="form-control width-300" id="edit_blog_photo" placeholder="대표 사진" />*@
+                                    <div class="edit-blog-photo-list row">
+
+                                    </div>
+                                    <input id="edit_blog_photo" name="add_blog_photo" type="file" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_tag">태그</label>
+                                    <input type="text" class="form-control width-300" id="edit_blog_tag" placeholder="#무료#인기#귀여운" />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="edit_blog_point">노출중요도</label>
+                                    <input type="text" class="form-control width-300" id="edit_blog_point" placeholder="노출 중요도" />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="editBlog()" class="btn btn-default">수정</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>이름</th>
+                            <th>링크</th>
+                            <th>등록일</th>
+                            <th>태그</th>
+                            <th>노출중요도</th>
+                            <th>수정/삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="payment">
+                <h3>구매 내역</h3>
+                <div class="modal fade" id="detailPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width:400px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">상업용 구매내역 상세</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="" for="payment_detail_company_name">회사명</label>
+                                    <input type="text" class="form-control width-300" id="payment_detail_company_name" placeholder="" disabled />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="payment_detail_company_number">사업자번호</label>
+                                    <input type="text" class="form-control width-300" id="payment_detail_company_number" placeholder="" disabled />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="payment_detail_company_mail">회사 메일</label>
+                                    <input type="text" class="form-control width-300" id="payment_detail_company_mail" placeholder="" disabled />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="payment_detail_company_phone">회사 전화번호</label>
+                                    <input type="text" class="form-control width-300" id="payment_detail_company_phone" placeholder="" disabled />
+                                </div><!-- end form group -->
+                                <div class="form-group">
+                                    <label class="" for="payment_detail_purpose">사용목적</label>
+                                    <input type="text" class="form-control width-300" id="payment_detail_purpose" placeholder="" disabled />
+                                </div><!-- end form group -->
+                            </div>
+                            <div class="modal-footer">
+                                @*<button type="button" onclick="addBlog()" class="btn btn-default">등록</button>*@
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <table class="table table-alternative table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>폰트</th>
+                            <th>구매자</th>
+                            <th>용도</th>
+                            <th>구매일</th>
+                            <th>상세</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->

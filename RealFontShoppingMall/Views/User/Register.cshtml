@@ -1,0 +1,258 @@
+﻿<script type="text/javascript">
+    var loginId = '';
+    var password = '';
+    var passwordConfirm = '';
+    var email = '';
+    var phone = '';
+    var gender = 1;
+
+    // 필수 약관 동의하기
+    var agree = function () {
+        var agreeConfirm = $('#agree-confirm').is(':checked');
+        //console.log(agreeConfirm);
+        if (!agreeConfirm) {
+            alert('약관에 동의해주세요.');
+            return;
+        }
+        $('#register-page').css('display', 'block');
+        $('#agree-page').css('display', 'none');
+    }
+        
+    // 회원가입하기
+    var register = function () {
+        loginId = $('#inputLoginId').val();
+        password = $('#inputPassword').val();
+        passwordConfirm = $('#inputPasswordConfirm').val();
+        email = $('#inputEmail').val();
+        phone = $('#inputPhone').val();
+        gender = $('input[name="gender"]:checked').val();
+
+        var data = {
+            login_id: loginId,
+            password: password,
+            email: email,
+            phone: phone,
+            gender : gender
+        };
+        //console.log(data);
+
+        if (!isValid(loginId)) {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+
+        if (!isValid(password) || !isValid(passwordConfirm)) {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        if (!isValid(email)) {
+            alert('이메일을 입력해주세요.');
+            return;
+        }
+
+        if (!isValid(phone)) {
+            alert('연락처를 입력해주세요.');
+            return;
+        }
+
+        if (password != passwordConfirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        loadingStart();
+
+        $.ajax({
+            url: '/user/register',
+            method: 'POST',
+            data: data,
+            success: function (result) {
+                //console.log(result);
+                loadingStop();
+                if(result.state == 'ok') {
+                    setUserInfo(result.data);
+                    location.href = '/home/index';
+                }
+                if (result.state == 'duplicated') {
+                    alert('중복된 아이디입니다.');
+                    return;
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                
+                alert('잘못된 요청입니다.');
+                //console.log(xhr.statusText);
+                //console.log(textStatus);
+                //console.log(error);
+            }
+        })
+    }
+
+    var getGender = function () {
+        $('input[name="gender"]').on('change', function () {
+            gender = $('input[name="gender"]:checked', '#registerForm').val();
+            //console.log(gender);
+        })
+    }
+
+    var cancel = function () {
+        location.href = '/home/index';
+    }
+    
+    // Init
+    $(document).ready(function () {
+        getGender();
+    });
+</script>
+
+<div id="agree-page" class="col-md-9 content">
+    <div class="page">
+        <article>
+            <div class="page-header">
+                <h1>회원가입</h1>
+                @*<p class="lead">My profile. Cras sit amet nibh libero, in gravida nulla.</p>*@
+            </div><!-- end page-header -->
+
+            <h3>필수약관동의</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">리얼폰트 이용약관</h3>
+                </div>
+                <div class="panel-body" style="overflow-y:scroll; max-height:100px">
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">전자금융거래 이용약관</h3>
+                </div>
+                <div class="panel-body" style="overflow-y:scroll; max-height:100px">
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">개인정보 수집 동의서</h3>
+                </div>
+                <div class="panel-body" style="overflow-y:scroll; max-height:100px">
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                    약관(約款)은 계약의 당사자가 다수의 상대편과 계약을 체결하기 위하여 일정한 형식에 따라 미리 마련한 계약의 내용을 뜻한다[1]. 약관에는 이미 작성된 계약조항의 전체를 말하는 보통 거래약관이나 보통약관의 경우와 특약조항이나 면책약관의 경우 등이 있는데, 대량 거래의 수요에 대응하기 위하여 일반적인 계약의 내용을 당사자 한쪽이 미리 정하여 놓은 계약조항을 가리킨다.
+                </div>
+            </div>
+            <div style="text-align:center; font-weight:bold">
+                리얼폰트 이용약관, 전자금융거래 이용약관, 개인정보 수집에 모두 동의합니다.
+                <br />
+                <label class="checkbox" style="display: inline-block">
+                    <input id="agree-confirm" type="checkbox" value="1" />
+                    <span></span>
+                    전체 동의
+                </label>
+            </div>
+            <div style="text-align:center">
+                <button class="btn btn-default" onclick="agree()">동의</button>
+                <button class="btn btn-danger" onclick="cancel()">취소</button>
+            </div>
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->
+<div id="register-page" class="col-md-9 content" style="display: none">
+    <div class="page">
+        <article>
+            @*<div class="page-header">
+                <h1>My Page</h1>
+                <p class="lead"></p>
+            </div>*@<!-- end page-header -->
+            <h2>회원가입</h2>
+
+            <form id="registerForm" class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label">아이디</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputLoginId" placeholder="아이디" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label">비밀번호</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" id="inputPassword" placeholder="비밀번호" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label">비밀번호 확인</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" id="inputPasswordConfirm" placeholder="비밀번호 확인" />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">이메일</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputEmail" placeholder="이메일을 입력해주세요." />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="inputEmail">성별</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                    <input name="gender" type="radio" value="1" checked />
+                                    <span></span>
+                                    남
+                                </label>
+                                <label class="radio" style="display: inline-block; padding-top: 0px">
+                                    <input name="gender" type="radio" value="0" />
+                                    <span></span>
+                                    여
+                                </label>
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="inputPhone">전화번호</label>
+                    <div class="controls">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="inputPhone" placeholder="연락 가능한 전화번호를 입력해주세요." />
+                            </div><!-- end col md -->
+                        </div><!-- end row -->
+                    </div><!-- end controls-->
+                </div><!-- end form-group -->
+
+                <div class="form-actions">
+                    <button type="button" onclick="register()" class="btn btn-default">회원가입</button>
+                    <button type="button" onclick="cancel()" class="btn btn-danger">취소</button>
+                </div><!-- end form actions -->
+
+            </form>
+
+        </article><!-- end article -->
+    </div><!-- end page -->
+</div><!-- end col -->
